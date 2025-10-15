@@ -46,6 +46,14 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
         
+        .section-title {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
         .data-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -58,12 +66,12 @@
             padding: 20px;
             border-radius: 12px;
             border-left: 4px solid #667eea;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
         }
         
-        .data-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .data-item.updating {
+            background: #fff3cd;
+            border-left-color: #ffc107;
         }
         
         .data-label {
@@ -77,6 +85,48 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .data-value.updating {
+            color: #856404;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .data-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .data-table td.updating {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
         }
         
         .loading {
@@ -117,11 +167,29 @@
             transform: scale(0.98);
         }
         
+        .refresh-btn.updating {
+            background: #ffc107;
+            cursor: not-allowed;
+        }
+        
         .last-update {
             text-align: center;
             color: rgba(255,255,255,0.8);
             font-size: 0.9rem;
             margin-top: 10px;
+        }
+        
+        .update-indicator {
+            text-align: center;
+            color: #ffc107;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .update-indicator.visible {
+            opacity: 1;
         }
     </style>
 </head>
@@ -139,9 +207,10 @@
                 </div>
             </div>
             
-            <button class="refresh-btn" onclick="loadSheetData()">
+            <button class="refresh-btn" id="refresh-btn" onclick="loadSheetData()">
                 🔄 Atualizar Dados
             </button>
+            <div class="update-indicator" id="update-indicator">Atualizando...</div>
             
             <div class="last-update" id="last-update">
                 Última atualização: --
@@ -165,20 +234,221 @@
             autoRefresh: 30000 // 30 seconds
         };
 
+        // Global object to store all spreadsheet data by cell address
+        let spreadsheetData = {};
+
+        // Function to convert row index to letter (1 -> A, 2 -> B, etc.)
+        function indexToLetter(index) {
+            let letter = '';
+            while (index >= 0) {
+                letter = String.fromCharCode(65 + (index % 26)) + letter;
+                index = Math.floor(index / 26) - 1;
+            }
+            return letter;
+        }
+
+        // Function to store all data in the global object by cell address
+        function storeDataByCell(values) {
+            if (!values || values.length === 0) return;
+            
+            // Store each cell value with its address
+            values.forEach((row, rowIndex) => {
+                row.forEach((cellValue, colIndex) => {
+                    const cellAddress = `${indexToLetter(colIndex)}${rowIndex + 1}`;
+                    spreadsheetData[cellAddress] = cellValue || '';
+                });
+            });
+            
+            console.log('📊 All data stored by cell address');
+        }
+
+        // Function to get value from specific cell
+        function getCellValue(cellAddress) {
+            return spreadsheetData[cellAddress] || 'N/A';
+        }
+
+        // Function to get range of values
+        function getRangeValues(startCell, endCell) {
+            const values = [];
+            
+            // Parse cell addresses (simple implementation for A1 notation)
+            const startCol = startCell.match(/[A-Z]+/)[0];
+            const startRow = parseInt(startCell.match(/\d+/)[0]);
+            const endCol = endCell.match(/[A-Z]+/)[0];
+            const endRow = parseInt(endCell.match(/\d+/)[0]);
+            
+            // Convert letters to numbers
+            function colToNum(col) {
+                let num = 0;
+                for (let i = 0; i < col.length; i++) {
+                    num = num * 26 + (col.charCodeAt(i) - 64);
+                }
+                return num - 1;
+            }
+            
+            const startColNum = colToNum(startCol);
+            const endColNum = colToNum(endCol);
+            
+            // Extract values from the range
+            for (let row = startRow; row <= endRow; row++) {
+                const rowData = [];
+                for (let col = startColNum; col <= endColNum; col++) {
+                    const cellAddress = `${indexToLetter(col)}${row}`;
+                    rowData.push(getCellValue(cellAddress));
+                }
+                values.push(rowData);
+            }
+            
+            return values;
+        }
+
+        // Function to show updating state
+        function showUpdatingState(show) {
+            const refreshBtn = document.getElementById('refresh-btn');
+            const updateIndicator = document.getElementById('update-indicator');
+            
+            if (show) {
+                refreshBtn.classList.add('updating');
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '⏳ Atualizando...';
+                updateIndicator.classList.add('visible');
+            } else {
+                refreshBtn.classList.remove('updating');
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '🔄 Atualizar Dados';
+                updateIndicator.classList.remove('visible');
+            }
+        }
+
+        // Function to update individual values with smooth transition
+        function updateDashboardValues() {
+            // Update table cells for range V2:AB3
+            const range1 = getRangeValues('V2', 'AB3');
+            const tableRows = document.querySelectorAll('.data-table tbody tr');
+            
+            tableRows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('td');
+                cells.forEach((cell, cellIndex) => {
+                    // Add updating class for visual feedback
+                    cell.classList.add('updating');
+                    
+                    setTimeout(() => {
+                        cell.textContent = range1[rowIndex + 1]?.[cellIndex] || 'N/A';
+                        cell.classList.remove('updating');
+                    }, 100 * (cellIndex + rowIndex));
+                });
+            });
+            
+            // Update data items for range V8:X11
+            const range2 = getRangeValues('V8', 'X11');
+            const dataItems = document.querySelectorAll('.data-grid .data-item');
+            
+            dataItems.forEach((item, index) => {
+                const totalRows = range2.length;
+                const totalCols = range2[0]?.length || 0;
+                const rowIndex = Math.floor(index / totalCols);
+                const colIndex = index % totalCols;
+                
+                const valueElement = item.querySelector('.data-value');
+                
+                // Add updating class for visual feedback
+                item.classList.add('updating');
+                valueElement.classList.add('updating');
+                
+                setTimeout(() => {
+                    valueElement.textContent = range2[rowIndex]?.[colIndex] || 'N/A';
+                    item.classList.remove('updating');
+                    valueElement.classList.remove('updating');
+                }, 150 * (index + 1));
+            });
+            
+            // Update debug info
+            const debugInfo = document.querySelector('.debug-info');
+            if (debugInfo) {
+                debugInfo.innerHTML = `
+                    <strong>Total de células carregadas:</strong> ${Object.keys(spreadsheetData).length}<br>
+                    <strong>Exemplo de valores:</strong><br>
+                    V2: "${getCellValue('V2')}" | V8: "${getCellValue('V8')}" | X11: "${getCellValue('X11')}"
+                `;
+            }
+            
+            console.log('✅ Dashboard values updated smoothly');
+        }
+
+        // Function to create initial dashboard structure
+        function createDashboardStructure(container) {
+            const range1 = getRangeValues('V2', 'AB3');
+            const range2 = getRangeValues('V8', 'X11');
+            
+            let html = '';
+            
+            // Create table structure for range V2:AB3
+            html += `
+                <div class="section-title">📋 Dados do Range V2:AB3</div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                ${range1[0]?.map((header, index) => `<th>Col ${index + 1}</th>`).join('') || '<th>Carregando...</th>'}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${range1.slice(1).map(row => `
+                                <tr>
+                                    ${row?.map(cell => `<td>${cell}</td>`).join('') || '<td>N/A</td>'}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            // Create data grid structure for range V8:X11
+            html += `
+                <div class="section-title">📊 Dados do Range V8:X11</div>
+                <div class="data-grid">
+            `;
+            
+            range2.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    const cellAddress = `V${8 + rowIndex}${String.fromCharCode(88 + colIndex)}`;
+                    html += `
+                        <div class="data-item">
+                            <div class="data-label">Célula ${cellAddress}</div>
+                            <div class="data-value">${cell}</div>
+                        </div>
+                    `;
+                });
+            });
+            
+            html += '</div>';
+            
+            // Add debug information
+            html += `
+                <div class="section-title">🔍 Debug Info</div>
+                <div class="debug-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 0.9rem;">
+                    <strong>Total de células carregadas:</strong> ${Object.keys(spreadsheetData).length}<br>
+                    <strong>Exemplo de valores:</strong><br>
+                    V2: "${getCellValue('V2')}" | V8: "${getCellValue('V8')}" | X11: "${getCellValue('X11')}"
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
         // Main function to load data
         async function loadSheetData() {
             const container = document.getElementById('data-container');
             const lastUpdate = document.getElementById('last-update');
             
             try {
-                // Show loading state
-                container.innerHTML = '<div class="loading">Carregando dados...</div>';
+                // Show updating state
+                showUpdatingState(true);
                 
                 // Build API URL
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${CONFIG.range}?key=${CONFIG.apiKey}`;
                 
                 console.log('📡 Making request to Google Sheets API...');
-                console.log('URL:', url);
                 
                 // Make request
                 const response = await fetch(url);
@@ -189,26 +459,25 @@
                 
                 const data = await response.json();
                 
-                // Log the complete API response to console
-                console.log('✅ Google Sheets API Response:');
-                // console.log('Full response object:', data);
-                // console.log('Spreadsheet ID:', data.spreadsheetId);
-                // console.log('Range:', data.range);
-                // console.log('Values received:', data.values);
-                // console.log('Number of rows:', data.values ? data.values.length : 0);
+                // Store all data in global object
+                storeDataByCell(data.values);
                 
-                // Process and display data
-                displayData(data.values, container);
+                // Check if this is the first load
+                const isFirstLoad = container.querySelector('.loading') !== null;
+                
+                if (isFirstLoad) {
+                    // Create dashboard structure for the first time
+                    createDashboardStructure(container);
+                } else {
+                    // Update existing values smoothly
+                    updateDashboardValues();
+                }
                 
                 // Update timestamp
                 lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
                 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
-                console.log('Error details:', {
-                    message: error.message,
-                    config: CONFIG
-                });
                 
                 container.innerHTML = `
                     <div class="error">
@@ -220,55 +489,15 @@
                         - Permissões da planilha
                     </div>
                 `;
+            } finally {
+                // Hide updating state
+                showUpdatingState(false);
             }
-        }
-
-        // Function to display data on the page
-        function displayData(values, container) {
-            if (!values || values.length === 0) {
-                console.log('⚠️ No data found in the spreadsheet');
-                container.innerHTML = '<div class="error">Nenhum dado encontrado na planilha</div>';
-                return;
-            }
-            
-            console.log('📊 Displaying data on page:');
-            console.log('Number of rows to display:', values.length);
-            console.log('Data content:', values);
-            
-            let html = '<div class="data-grid">';
-            
-            // Process each row (assuming format: [label, value])
-            values.forEach((row, index) => {
-                // console.log(`Row ${index}:`, row);
-                
-                if (row.length >= 2) {
-                    const label = row[0] || `Item ${index + 1}`;
-                    const value = row[1] || 'N/A';
-                    
-                    // console.log(`→ Displaying: "${label}" = "${value}"`);
-                    
-                    html += `
-                        <div class="data-item">
-                            <div class="data-label">${label}</div>
-                            <div class="data-value">${value}</div>
-                        </div>
-                    `;
-                } else {
-                    // console.log(`⚠️ Row ${index} has insufficient data:`, row);
-                }
-            });
-            
-          
-            html += '</div>';
-            container.innerHTML = html;
-            
-            console.log('✅ Data display completed');
         }
 
         // Initialization
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 WebApp initialized');
-            console.log('Configuration:', CONFIG);
             
             // Load data on first run
             loadSheetData();
