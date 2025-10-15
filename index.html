@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valores da Planilha</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .data-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .data-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .data-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .data-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #d63031;
+            margin-bottom: 20px;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .refresh-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .last-update {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Dashboard de Valores</h1>
+            <p>Dados em tempo real da planilha</p>
+        </div>
+        
+        <div class="card">
+            <div id="data-container">
+                <div class="loading">
+                    <div>Carregando dados...</div>
+                </div>
+            </div>
+            
+            <button class="refresh-btn" onclick="loadSheetData()">
+                🔄 Atualizar Dados
+            </button>
+            
+            <div class="last-update" id="last-update">
+                Última atualização: --
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION - Edit these variables according to your needs
+        const CONFIG = {
+            // Google Sheets spreadsheet ID (found in the spreadsheet URL)
+            sheetId: '1YUnIjPwQGTNu-ePkHD-l0MSDTD_jn0-qXtAFUXVdBuI',
+            
+            // Cell range you want to fetch (ex: 'Sheet1!A1:B10')
+            range: 'Exemplo!A1:AB42',
+            
+            // Your Google Sheets API key
+            apiKey: 'AIzaSyBV61SGsAJ3X93TNG4Df_3bgj2yYCRbNEk',
+            
+            // Auto-refresh interval in milliseconds (optional)
+            autoRefresh: 30000 // 30 seconds
+        };
+
+        // Main function to load data
+        async function loadSheetData() {
+            const container = document.getElementById('data-container');
+            const lastUpdate = document.getElementById('last-update');
+            
+            try {
+                // Show loading state
+                container.innerHTML = '<div class="loading">Carregando dados...</div>';
+                
+                // Build API URL
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${CONFIG.range}?key=${CONFIG.apiKey}`;
+                
+                console.log('📡 Making request to Google Sheets API...');
+                console.log('URL:', url);
+                
+                // Make request
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Log the complete API response to console
+                console.log('✅ Google Sheets API Response:');
+                // console.log('Full response object:', data);
+                // console.log('Spreadsheet ID:', data.spreadsheetId);
+                // console.log('Range:', data.range);
+                // console.log('Values received:', data.values);
+                // console.log('Number of rows:', data.values ? data.values.length : 0);
+                
+                // Process and display data
+                displayData(data.values, container);
+                
+                // Update timestamp
+                lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                console.log('Error details:', {
+                    message: error.message,
+                    config: CONFIG
+                });
+                
+                container.innerHTML = `
+                    <div class="error">
+                        <strong>Erro ao carregar dados:</strong><br>
+                        ${error.message}<br><br>
+                        Verifique:<br>
+                        - ID da planilha<br>
+                        - Chave da API<br>
+                        - Permissões da planilha
+                    </div>
+                `;
+            }
+        }
+
+        // Function to display data on the page
+        function displayData(values, container) {
+            if (!values || values.length === 0) {
+                console.log('⚠️ No data found in the spreadsheet');
+                container.innerHTML = '<div class="error">Nenhum dado encontrado na planilha</div>';
+                return;
+            }
+            
+            console.log('📊 Displaying data on page:');
+            console.log('Number of rows to display:', values.length);
+            console.log('Data content:', values);
+            
+            let html = '<div class="data-grid">';
+            
+            // Process each row (assuming format: [label, value])
+            values.forEach((row, index) => {
+                // console.log(`Row ${index}:`, row);
+                
+                if (row.length >= 2) {
+                    const label = row[0] || `Item ${index + 1}`;
+                    const value = row[1] || 'N/A';
+                    
+                    // console.log(`→ Displaying: "${label}" = "${value}"`);
+                    
+                    html += `
+                        <div class="data-item">
+                            <div class="data-label">${label}</div>
+                            <div class="data-value">${value}</div>
+                        </div>
+                    `;
+                } else {
+                    // console.log(`⚠️ Row ${index} has insufficient data:`, row);
+                }
+            });
+            
+          
+            html += '</div>';
+            container.innerHTML = html;
+            
+            console.log('✅ Data display completed');
+        }
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 WebApp initialized');
+            console.log('Configuration:', CONFIG);
+            
+            // Load data on first run
+            loadSheetData();
+            
+            // Set up auto-refresh if enabled
+            if (CONFIG.autoRefresh) {
+                console.log(`🔄 Auto-refresh enabled: ${CONFIG.autoRefresh}ms`);
+                setInterval(loadSheetData, CONFIG.autoRefresh);
+            }
+        });
+
+        // Add swipe gesture support for refresh
+        let touchStartY = 0;
+        
+        document.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchend', e => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
+            
+            // Swipe down to refresh
+            if (diff > 50 && window.scrollY === 0) {
+                console.log('👆 Swipe down detected - refreshing data');
+                loadSheetData();
+            }
+        });
+    </script>
+</body>
+</html>
