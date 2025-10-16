@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -18,34 +19,34 @@
             padding: 20px;
             color: #333;
         }
-        
+
         .container {
             max-width: 800px;
             margin: 0 auto;
         }
-        
+
         .header {
             text-align: center;
             margin-bottom: 30px;
             color: white;
         }
-        
+
         .header h1 {
             font-size: 2rem;
             margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-        
+
         .card {
             background: white;
             border-radius: 16px;
             padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .section-title {
             font-size: 1.2rem;
             color: #667eea;
@@ -53,14 +54,14 @@
             padding-bottom: 8px;
             border-bottom: 2px solid #f0f0f0;
         }
-        
+
         .data-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
-        
+
         .data-item {
             background: #f8f9fa;
             padding: 20px;
@@ -68,44 +69,44 @@
             border-left: 4px solid #667eea;
             transition: all 0.3s ease;
         }
-        
+
         .data-item.updating {
             background: #fff3cd;
             border-left-color: #ffc107;
         }
-        
+
         .data-label {
             font-size: 0.9rem;
             color: #666;
             margin-bottom: 8px;
             font-weight: 500;
         }
-        
+
         .data-value {
             font-size: 1.5rem;
             font-weight: bold;
             color: #333;
             transition: all 0.3s ease;
         }
-        
+
         .data-value.updating {
             color: #856404;
         }
-        
+
         .table-container {
             overflow-x: auto;
             margin: 15px 0;
         }
-        
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .data-table th {
             background: #667eea;
             color: white;
@@ -113,29 +114,29 @@
             text-align: left;
             font-weight: 600;
         }
-        
+
         .data-table td {
             padding: 12px 15px;
             border-bottom: 1px solid #f0f0f0;
             transition: all 0.3s ease;
         }
-        
+
         .data-table td.updating {
             background: #fff3cd;
             color: #856404;
         }
-        
+
         .data-table tr:hover {
             background: #f8f9fa;
         }
-        
+
         .loading {
             text-align: center;
             padding: 40px;
             color: white;
             font-size: 1.1rem;
         }
-        
+
         .error {
             background: #ffe6e6;
             color: #d63031;
@@ -144,7 +145,7 @@
             border-left: 4px solid #d63031;
             margin-bottom: 20px;
         }
-        
+
         .refresh-btn {
             background: #667eea;
             color: white;
@@ -158,27 +159,27 @@
             margin: 20px auto;
             width: 200px;
         }
-        
+
         .refresh-btn:hover {
             background: #5a6fd8;
         }
-        
+
         .refresh-btn:active {
             transform: scale(0.98);
         }
-        
+
         .refresh-btn.updating {
             background: #ffc107;
             cursor: not-allowed;
         }
-        
+
         .last-update {
             text-align: center;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
             margin-top: 10px;
         }
-        
+
         .update-indicator {
             text-align: center;
             color: #ffc107;
@@ -187,31 +188,106 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         .update-indicator.visible {
             opacity: 1;
         }
+
+        /* Estilos para a equação */
+        .equation-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .equation-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .equation-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .equation-item.result {
+            border-left-color: #4CAF50;
+            background: #f1f8e9;
+        }
+
+        .equation-operator {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* Estilos para elementos destacados */
+        .data-item.highlight {
+            border-left-color: #4CAF50;
+            background: #f1f8e9;
+        }
+
+        .data-value.large {
+            font-size: 1.8rem;
+        }
+
+        .data-value.negative {
+            color: #d63031;
+        }
+
+        .data-value.highlight {
+            color: #4CAF50;
+            font-size: 1.6rem;
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 768px) {
+            .equation-row {
+                gap: 10px;
+            }
+
+            .equation-item {
+                min-width: 100px;
+                padding: 12px 8px;
+            }
+
+            .equation-operator {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>📊 Dashboard de Valores</h1>
             <p>Dados em tempo real da planilha</p>
         </div>
-        
+
         <div class="card">
             <div id="data-container">
                 <div class="loading">
                     <div>Carregando dados...</div>
                 </div>
             </div>
-            
+
             <button class="refresh-btn" id="refresh-btn" onclick="loadSheetData()">
                 🔄 Atualizar Dados
             </button>
             <div class="update-indicator" id="update-indicator">Atualizando...</div>
-            
+
             <div class="last-update" id="last-update">
                 Última atualização: --
             </div>
@@ -223,13 +299,13 @@
         const CONFIG = {
             // Google Sheets spreadsheet ID (found in the spreadsheet URL)
             sheetId: '1YUnIjPwQGTNu-ePkHD-l0MSDTD_jn0-qXtAFUXVdBuI',
-            
+
             // Cell range you want to fetch (ex: 'Sheet1!A1:B10')
             range: 'Exemplo!A1:AB42',
-            
+
             // Your Google Sheets API key
             apiKey: 'AIzaSyBV61SGsAJ3X93TNG4Df_3bgj2yYCRbNEk',
-            
+
             // Auto-refresh interval in milliseconds (optional)
             autoRefresh: 30000 // 30 seconds
         };
@@ -250,7 +326,7 @@
         // Function to store all data in the global object by cell address
         function storeDataByCell(values) {
             if (!values || values.length === 0) return;
-            
+
             // Store each cell value with its address
             values.forEach((row, rowIndex) => {
                 row.forEach((cellValue, colIndex) => {
@@ -258,7 +334,7 @@
                     spreadsheetData[cellAddress] = cellValue || '';
                 });
             });
-            
+
             console.log('📊 All data stored by cell address');
         }
 
@@ -270,13 +346,13 @@
         // Function to get range of values
         function getRangeValues(startCell, endCell) {
             const values = [];
-            
+
             // Parse cell addresses (simple implementation for A1 notation)
             const startCol = startCell.match(/[A-Z]+/)[0];
             const startRow = parseInt(startCell.match(/\d+/)[0]);
             const endCol = endCell.match(/[A-Z]+/)[0];
             const endRow = parseInt(endCell.match(/\d+/)[0]);
-            
+
             // Convert letters to numbers
             function colToNum(col) {
                 let num = 0;
@@ -285,10 +361,10 @@
                 }
                 return num - 1;
             }
-            
+
             const startColNum = colToNum(startCol);
             const endColNum = colToNum(endCol);
-            
+
             // Extract values from the range
             for (let row = startRow; row <= endRow; row++) {
                 const rowData = [];
@@ -298,7 +374,7 @@
                 }
                 values.push(rowData);
             }
-            
+
             return values;
         }
 
@@ -306,7 +382,7 @@
         function showUpdatingState(show) {
             const refreshBtn = document.getElementById('refresh-btn');
             const updateIndicator = document.getElementById('update-indicator');
-            
+
             if (show) {
                 refreshBtn.classList.add('updating');
                 refreshBtn.disabled = true;
@@ -319,152 +395,181 @@
                 updateIndicator.classList.remove('visible');
             }
         }
-
         // Function to update individual values with smooth transition
         function updateDashboardValues() {
-            // Update table cells for range V2:AB3
-            const range1 = getRangeValues('V2', 'AB3');
+            // 1. Atualizar faixa atual (X2/X3)
+            const currentRangeElement = document.querySelector('.data-item.highlight .data-value');
+            if (currentRangeElement) {
+                currentRangeElement.classList.add('updating');
+                setTimeout(() => {
+                    currentRangeElement.textContent = getCellValue('X3') || 'N/A';
+                    currentRangeElement.classList.remove('updating');
+                }, 100);
+            }
+
+            // 2. Atualizar equação
+            const equationItems = document.querySelectorAll('.equation-item');
+            const equationValues = [
+                getCellValue('V3'), // Bônus 1
+                getCellValue('Y3'), // Bônus 2
+                getCellValue('Z3'), // Prejuízo
+                getCellValue('AA3') // Resultado
+            ];
+
+            equationItems.forEach((item, index) => {
+                const valueElement = item.querySelector('.data-value');
+                if (valueElement && equationValues[index]) {
+                    valueElement.classList.add('updating');
+                    setTimeout(() => {
+                        valueElement.textContent = equationValues[index];
+                        valueElement.classList.remove('updating');
+                    }, 150 * (index + 1));
+                }
+            });
+
+            // 3. Atualizar tabela de faixas de bônus
+            const bonusRanges = getRangeValues('V8', 'W12');
             const tableRows = document.querySelectorAll('.data-table tbody tr');
-            
+
             tableRows.forEach((row, rowIndex) => {
                 const cells = row.querySelectorAll('td');
                 cells.forEach((cell, cellIndex) => {
-                    // Add updating class for visual feedback
                     cell.classList.add('updating');
-                    
                     setTimeout(() => {
-                        cell.textContent = range1[rowIndex + 1]?.[cellIndex] || 'N/A';
+                        cell.textContent = bonusRanges[rowIndex + 1]?.[cellIndex] || 'N/A';
                         cell.classList.remove('updating');
                     }, 100 * (cellIndex + rowIndex));
                 });
             });
-            
-            // Update data items for range V8:X11
-            const range2 = getRangeValues('V8', 'X11');
-            const dataItems = document.querySelectorAll('.data-grid .data-item');
-            
-            dataItems.forEach((item, index) => {
-                const totalRows = range2.length;
-                const totalCols = range2[0]?.length || 0;
-                const rowIndex = Math.floor(index / totalCols);
-                const colIndex = index % totalCols;
-                
-                const valueElement = item.querySelector('.data-value');
-                
-                // Add updating class for visual feedback
-                item.classList.add('updating');
-                valueElement.classList.add('updating');
-                
-                setTimeout(() => {
-                    valueElement.textContent = range2[rowIndex]?.[colIndex] || 'N/A';
-                    item.classList.remove('updating');
-                    valueElement.classList.remove('updating');
-                }, 150 * (index + 1));
-            });
-            
-            // Update debug info
-            const debugInfo = document.querySelector('.debug-info');
-            if (debugInfo) {
-                debugInfo.innerHTML = `
-                    <strong>Total de células carregadas:</strong> ${Object.keys(spreadsheetData).length}<br>
-                    <strong>Exemplo de valores:</strong><br>
-                    V2: "${getCellValue('V2')}" | V8: "${getCellValue('V8')}" | X11: "${getCellValue('X11')}"
-                `;
-            }
-            
+
             console.log('✅ Dashboard values updated smoothly');
         }
 
         // Function to create initial dashboard structure
         function createDashboardStructure(container) {
-            const range1 = getRangeValues('V2', 'AB3');
-            const range2 = getRangeValues('V8', 'X11');
-            
             let html = '';
-            
-            // Create table structure for range V2:AB3
+
+            // 1. Elemento com título X2 e conteúdo X3 (Faixa atual)
             html += `
-                <div class="section-title">📋 Dados do Range V2:AB3</div>
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                ${range1[0]?.map((header, index) => `<th>Col ${index + 1}</th>`).join('') || '<th>Carregando...</th>'}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${range1.slice(1).map(row => `
-                                <tr>
-                                    ${row?.map(cell => `<td>${cell}</td>`).join('') || '<td>N/A</td>'}
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+        <div class="section-title">🎯 Status Atual</div>
+        <div class="data-grid">
+            <div class="data-item highlight">
+                <div class="data-label">${getCellValue('X2') || 'Faixa atual'}</div>
+                <div class="data-value large">${getCellValue('X3') || 'N/A'}</div>
+            </div>
+        </div>
+    `;
+
+            // 2. Conjunto de elementos formando uma equação
+            html += `
+        <div class="section-title">🧮 Cálculo do Bônus</div>
+        <div class="equation-container">
+            <div class="equation-row">
+                <!-- 2.1 Bônus V2/V3 -->
+                <div class="equation-item">
+                    <div class="data-label">${getCellValue('V2') || 'Bônus'}</div>
+                    <div class="data-value">${getCellValue('V3') || 'N/A'}</div>
                 </div>
-            `;
-            
-            // Create data grid structure for range V8:X11
-            html += `
-                <div class="section-title">📊 Dados do Range V8:X11</div>
-                <div class="data-grid">
-            `;
-            
-            range2.forEach((row, rowIndex) => {
-                row.forEach((cell, colIndex) => {
-                    const cellAddress = `V${8 + rowIndex}${String.fromCharCode(88 + colIndex)}`;
-                    html += `
-                        <div class="data-item">
-                            <div class="data-label">Célula ${cellAddress}</div>
-                            <div class="data-value">${cell}</div>
-                        </div>
-                    `;
-                });
-            });
-            
-            html += '</div>';
-            
-            // Add debug information
-            html += `
-                <div class="section-title">🔍 Debug Info</div>
-                <div class="debug-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 0.9rem;">
-                    <strong>Total de células carregadas:</strong> ${Object.keys(spreadsheetData).length}<br>
-                    <strong>Exemplo de valores:</strong><br>
-                    V2: "${getCellValue('V2')}" | V8: "${getCellValue('V8')}" | X11: "${getCellValue('X11')}"
+                
+                <div class="equation-operator">+</div>
+                
+                <!-- 2.3 Bônus Y2/Y3 -->
+                <div class="equation-item">
+                    <div class="data-label">${getCellValue('Y2') || 'Bônus'}</div>
+                    <div class="data-value">${getCellValue('Y3') || 'N/A'}</div>
                 </div>
-            `;
-            
+                
+                <div class="equation-operator">-</div>
+                
+                <!-- 2.4 Prejuízo Z2/Z3 -->
+                <div class="equation-item">
+                    <div class="data-label">${getCellValue('Z2') || 'Prejuízo'}</div>
+                    <div class="data-value negative">${getCellValue('Z3') || 'N/A'}</div>
+                </div>
+                
+                <div class="equation-operator">=</div>
+                
+                <!-- 2.6 Resultado AA2/AA3 -->
+                <div class="equation-item result">
+                    <div class="data-label">${getCellValue('AA2') || 'Resultado'}</div>
+                    <div class="data-value highlight">${getCellValue('AA3') || 'N/A'}</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            // 3. Tabela de faixas de bônus (V8:W12)
+            const bonusRanges = getRangeValues('V8', 'W12');
+            html += `
+        <div class="section-title">📊 Faixas de Bônus Disponíveis</div>
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>${getCellValue('V8') || 'Nome da Faixa'}</th>
+                        <th>${getCellValue('W8') || 'Valor do Bônus'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${bonusRanges.slice(1).map((row, index) => `
+                        <tr>
+                            <td>${row[0] || 'N/A'}</td>
+                            <td>${row[1] || 'N/A'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+            // Debug information (opcional - pode remover se quiser)
+            html += `
+        <div class="section-title">🔍 Debug Info</div>
+        <div class="debug-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 0.9rem;">
+            <strong>Total de células carregadas:</strong> ${Object.keys(spreadsheetData).length}<br>
+            <strong>Valores chave:</strong><br>
+            X2/X3: "${getCellValue('X2')}" / "${getCellValue('X3')}"<br>
+            V2/V3: "${getCellValue('V2')}" / "${getCellValue('V3')}"<br>
+            Y2/Y3: "${getCellValue('Y2')}" / "${getCellValue('Y3')}"<br>
+            Z2/Z3: "${getCellValue('Z2')}" / "${getCellValue('Z3')}"<br>
+            AA2/AA3: "${getCellValue('AA2')}" / "${getCellValue('AA3')}"
+        </div>
+    `;
+
             container.innerHTML = html;
         }
-
         // Main function to load data
         async function loadSheetData() {
             const container = document.getElementById('data-container');
             const lastUpdate = document.getElementById('last-update');
-            
+
             try {
                 // Show updating state
                 showUpdatingState(true);
-                
+
                 // Build API URL
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${CONFIG.range}?key=${CONFIG.apiKey}`;
-                
+
                 console.log('📡 Making request to Google Sheets API...');
-                
+
                 // Make request
                 const response = await fetch(url);
-                
+
                 if (!response.ok) {
                     throw new Error(`Erro na API: ${response.status}`);
                 }
-                
+
                 const data = await response.json();
-                
+
                 // Store all data in global object
                 storeDataByCell(data.values);
-                
+
+                console.log("Spreadsheet data:")
+                console.log(spreadsheetData)
+
                 // Check if this is the first load
                 const isFirstLoad = container.querySelector('.loading') !== null;
-                
+
                 if (isFirstLoad) {
                     // Create dashboard structure for the first time
                     createDashboardStructure(container);
@@ -472,13 +577,13 @@
                     // Update existing values smoothly
                     updateDashboardValues();
                 }
-                
+
                 // Update timestamp
                 lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
-                
+
             } catch (error) {
                 console.error('❌ Error loading data:', error);
-                
+
                 container.innerHTML = `
                     <div class="error">
                         <strong>Erro ao carregar dados:</strong><br>
@@ -496,12 +601,12 @@
         }
 
         // Initialization
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('🚀 WebApp initialized');
-            
+
             // Load data on first run
             loadSheetData();
-            
+
             // Set up auto-refresh if enabled
             if (CONFIG.autoRefresh) {
                 console.log(`🔄 Auto-refresh enabled: ${CONFIG.autoRefresh}ms`);
@@ -510,4 +615,5 @@
         });
     </script>
 </body>
+
 </html>
