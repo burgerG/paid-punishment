@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valores da Planilha</title>
     <style>
+        /* ===== RESET & BASE STYLES ===== */
         * {
             margin: 0;
             padding: 0;
@@ -25,6 +26,7 @@
             margin: 0 auto;
         }
 
+        /* ===== HEADER STYLES ===== */
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -37,6 +39,7 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
+        /* ===== CARD & LAYOUT STYLES ===== */
         .card {
             background: white;
             border-radius: 16px;
@@ -55,6 +58,7 @@
             border-bottom: 2px solid #f0f0f0;
         }
 
+        /* ===== DATA GRID STYLES ===== */
         .data-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -68,6 +72,11 @@
             border-radius: 12px;
             border-left: 4px solid #667eea;
             transition: all 0.3s ease;
+        }
+
+        .data-item.highlight {
+            border-left-color: #4CAF50;
+            background: #f1f8e9;
         }
 
         .data-item.updating {
@@ -89,111 +98,24 @@
             transition: all 0.3s ease;
         }
 
+        .data-value.large {
+            font-size: 1.8rem;
+        }
+
+        .data-value.highlight {
+            color: #4CAF50;
+            font-size: 1.6rem;
+        }
+
+        .data-value.negative {
+            color: #d63031;
+        }
+
         .data-value.updating {
             color: #856404;
         }
 
-        .table-container {
-            overflow-x: auto;
-            margin: 15px 0;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-table th {
-            background: #667eea;
-            color: white;
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-
-        .data-table td.updating {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .data-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .error {
-            background: #ffe6e6;
-            color: #d63031;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #d63031;
-            margin-bottom: 20px;
-        }
-
-        .refresh-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: block;
-            margin: 20px auto;
-            width: 200px;
-        }
-
-        .refresh-btn:hover {
-            background: #5a6fd8;
-        }
-
-        .refresh-btn:active {
-            transform: scale(0.98);
-        }
-
-        .refresh-btn.updating {
-            background: #ffc107;
-            cursor: not-allowed;
-        }
-
-        .last-update {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-
-        .update-indicator {
-            text-align: center;
-            color: #ffc107;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .update-indicator.visible {
-            opacity: 1;
-        }
-
-        /* Estilos para a equação */
+        /* ===== EQUATION STYLES ===== */
         .equation-container {
             background: #f8f9fa;
             border-radius: 12px;
@@ -232,27 +154,134 @@
             text-align: center;
         }
 
-        /* Estilos para elementos destacados */
-        .data-item.highlight {
-            border-left-color: #4CAF50;
-            background: #f1f8e9;
+        /* ===== TABLE STYLES ===== */
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
         }
 
-        .data-value.large {
-            font-size: 1.8rem;
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .data-value.negative {
+        .data-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .data-table td.updating {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* ===== STATUS & FEEDBACK STYLES ===== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            background: #ffe6e6;
             color: #d63031;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #d63031;
+            margin-bottom: 20px;
         }
 
-        .data-value.highlight {
-            color: #4CAF50;
-            font-size: 1.6rem;
+        .last-update {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
 
-        /* Responsividade para mobile */
+        /* ===== BUTTON STYLES ===== */
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+        }
+
+        .refresh-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.98);
+        }
+
+        .refresh-btn.updating {
+            background: #ffc107;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .update-indicator {
+            text-align: center;
+            color: #ffc107;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .update-indicator.visible {
+            opacity: 1;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.7rem;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .data-item {
+                padding: 15px;
+            }
+
             .equation-row {
                 gap: 10px;
             }
@@ -265,6 +294,81 @@
             .equation-operator {
                 font-size: 1.2rem;
             }
+
+            .data-value {
+                font-size: 1.3rem;
+            }
+
+            .data-value.large {
+                font-size: 1.5rem;
+            }
+
+            .data-value.highlight {
+                font-size: 1.4rem;
+            }
+
+            .refresh-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .equation-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .equation-operator {
+                min-width: auto;
+                padding: 5px 0;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                margin: 20px 0 12px 0;
+            }
+        }
+
+        /* ===== ANIMATION & TRANSITION UTILITIES ===== */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== DEBUG STYLES ===== */
+        .debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border-left: 4px solid #6c757d;
         }
     </style>
 </head>
