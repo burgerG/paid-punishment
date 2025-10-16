@@ -246,6 +246,146 @@
             transform: none;
         }
 
+        /* ===== HEADER COM LOGO ===== */
+        .logo-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            width: 80px;
+            height: 88px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .header-text {
+            text-align: center;
+        }
+
+        .header-text h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: white;
+            /* Volta ao estilo original */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            /* Volta ao estilo original */
+        }
+
+        .header-text p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+            color: white;
+            /* Garantir que o subtítulo também fique branco */
+        }
+
+        /* ===== PROGRESS BAR PARA AUTO-REFRESH ===== */
+        .refresh-progress-container {
+            margin: -25px -25px 25px -25px;
+            border-radius: 16px 16px 0 0;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px 25px;
+        }
+
+        .refresh-indicator {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .refresh-text {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #countdown {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+            /* Transição mais rápida para suavidade */
+        }
+
+        /* ===== CORREÇÃO DA COR DA ÚLTIMA ATUALIZAÇÃO ===== */
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== RESPONSIVE ADJUSTMENTS ===== */
+        @media (max-width: 768px) {
+            .logo-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo {
+                width: 70px;
+                height: 77px;
+            }
+
+            .header-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-text p {
+                font-size: 1rem;
+            }
+
+            .refresh-progress-container {
+                margin: -20px -15px 20px -15px;
+                padding: 12px 15px;
+            }
+
+            .refresh-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-text h1 {
+                font-size: 1.6rem;
+            }
+
+            .logo {
+                width: 60px;
+                height: 66px;
+            }
+        }
+
         .update-indicator {
             text-align: center;
             color: #ffc107;
@@ -376,11 +516,27 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Dashboard de Valores</h1>
-            <p>Dados em tempo real da planilha</p>
+            <div class="logo-header">
+                <img src="./assets/logo.png" alt="Pizzaria Logo" class="logo">
+                <div class="header-text">
+                    <h1>🍕 Bonificação em Tempo Real</h1>
+                    <p>Acompanhe seu rendimento e bônus</p>
+                </div>
+            </div>
         </div>
 
         <div class="card">
+            <!-- Progress bar para auto-refresh -->
+            <div class="refresh-progress-container">
+                <div class="refresh-indicator">
+                    <span class="refresh-text" id="refresh-text">Próxima atualização automática: <span
+                            id="countdown">30s</span></span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
             <div id="data-container">
                 <div class="loading">
                     <div>Carregando dados...</div>
@@ -388,7 +544,7 @@
             </div>
 
             <button class="refresh-btn" id="refresh-btn" onclick="loadSheetData()">
-                🔄 Atualizar Dados
+                🔄 Atualizar Agora
             </button>
             <div class="update-indicator" id="update-indicator">Atualizando...</div>
 
@@ -416,6 +572,56 @@
 
         // Global object to store all spreadsheet data by cell address
         let spreadsheetData = {};
+
+        let refreshCountdown;
+        let progressInterval;
+        const TOTAL_REFRESH_TIME = CONFIG.autoRefresh; // 30 seconds
+
+        // Function to start the countdown timer
+        function startCountdown() {
+            clearInterval(refreshCountdown);
+            clearInterval(progressInterval);
+
+            let timeLeft = TOTAL_REFRESH_TIME / 1000; // Convert to seconds
+            const countdownElement = document.getElementById('countdown');
+            const progressFill = document.getElementById('progress-fill');
+
+            // Reset progress bar
+            progressFill.style.width = '0%';
+            progressFill.style.transition = 'none'; // Remove transição para reset instantâneo
+
+            // Forçar reflow
+            progressFill.offsetHeight;
+
+            // Restaurar transição suave
+            progressFill.style.transition = 'width 0.1s linear';
+
+            let startTime = Date.now();
+
+            // Update progress bar smoothly
+            progressInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / TOTAL_REFRESH_TIME) * 100, 100);
+
+                progressFill.style.width = `${progress}%`;
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 50); // Update every 50ms for smooth animation
+
+            // Update countdown text
+            refreshCountdown = setInterval(() => {
+                timeLeft--;
+
+                if (timeLeft <= 0) {
+                    clearInterval(refreshCountdown);
+                    countdownElement.textContent = '0s';
+                } else {
+                    countdownElement.textContent = `${timeLeft}s`;
+                }
+            }, 1000);
+        }
 
         // Function to convert row index to letter (1 -> A, 2 -> B, etc.)
         function indexToLetter(index) {
@@ -499,6 +705,7 @@
                 updateIndicator.classList.remove('visible');
             }
         }
+
         // Function to update individual values with smooth transition
         function updateDashboardValues() {
             // 1. Atualizar faixa atual (X2/X3)
@@ -642,7 +849,8 @@
 
             container.innerHTML = html;
         }
-        // Main function to load data
+
+        // Update the main load function to start countdown
         async function loadSheetData() {
             const container = document.getElementById('data-container');
             const lastUpdate = document.getElementById('last-update');
@@ -668,9 +876,6 @@
                 // Store all data in global object
                 storeDataByCell(data.values);
 
-                console.log("Spreadsheet data:")
-                console.log(spreadsheetData)
-
                 // Check if this is the first load
                 const isFirstLoad = container.querySelector('.loading') !== null;
 
@@ -685,19 +890,24 @@
                 // Update timestamp
                 lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
 
+                // Restart countdown after successful update
+                if (CONFIG.autoRefresh) {
+                    startCountdown();
+                }
+
             } catch (error) {
                 console.error('❌ Error loading data:', error);
 
                 container.innerHTML = `
-                    <div class="error">
-                        <strong>Erro ao carregar dados:</strong><br>
-                        ${error.message}<br><br>
-                        Verifique:<br>
-                        - ID da planilha<br>
-                        - Chave da API<br>
-                        - Permissões da planilha
-                    </div>
-                `;
+            <div class="error">
+                <strong>Erro ao carregar dados:</strong><br>
+                ${error.message}<br><br>
+                Verifique:<br>
+                - ID da planilha<br>
+                - Chave da API<br>
+                - Permissões da planilha
+            </div>
+        `;
             } finally {
                 // Hide updating state
                 showUpdatingState(false);
@@ -715,6 +925,7 @@
             if (CONFIG.autoRefresh) {
                 console.log(`🔄 Auto-refresh enabled: ${CONFIG.autoRefresh}ms`);
                 setInterval(loadSheetData, CONFIG.autoRefresh);
+                // Countdown will be started after first load
             }
         });
     </script>
