@@ -508,24 +508,6 @@
                 setInterval(loadSheetData, CONFIG.autoRefresh);
             }
         });
-
-        // Add swipe gesture support for refresh
-        let touchStartY = 0;
-        
-        document.addEventListener('touchstart', e => {
-            touchStartY = e.touches[0].clientY;
-        });
-        
-        document.addEventListener('touchend', e => {
-            const touchEndY = e.changedTouches[0].clientY;
-            const diff = touchStartY - touchEndY;
-            
-            // Swipe down to refresh
-            if (diff > 50 && window.scrollY === 0) {
-                console.log('👆 Swipe down detected - refreshing data');
-                loadSheetData();
-            }
-        });
     </script>
 </body>
 </html>
