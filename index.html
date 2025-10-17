@@ -18,7 +18,7 @@
             --text-dark: #333;
             --text-medium: #666;
             --text-light: #fff;
-            
+
             /* Theme Colors */
             --gold-color: #FFD700;
             --gold-dark: #B8860B;
@@ -27,7 +27,7 @@
             --bronze-color: #CD7F32;
             --bronze-dark: #8B4513;
             --default-color: #6c757d;
-            
+
             /* Spacing */
             --spacing-xs: 5px;
             --spacing-sm: 8px;
@@ -36,19 +36,19 @@
             --spacing-xl: 20px;
             --spacing-xxl: 25px;
             --spacing-xxxl: 30px;
-            
+
             /* Border Radius */
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
-            
+
             /* Shadows */
             --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
             --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
             --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.1);
             --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            
+
             /* Transitions */
             --transition-fast: 0.1s linear;
             --transition-normal: 0.3s ease;
@@ -219,9 +219,11 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6), 0 0 0 0 rgba(76, 175, 80, 0.4);
             }
+
             50% {
                 box-shadow: 0 0 0 15px rgba(76, 175, 80, 0.2), 0 0 0 30px rgba(76, 175, 80, 0.1);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(76, 175, 80, 0), 0 0 0 0 rgba(76, 175, 80, 0);
             }
@@ -231,9 +233,11 @@
             0% {
                 background-position: -100px;
             }
+
             50% {
                 background-position: 205%;
             }
+
             100% {
                 background-position: -100px;
             }
@@ -274,10 +278,12 @@
                 transform: scale(1);
                 box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
             }
+
             50% {
                 transform: scale(1.1);
                 box-shadow: 0 4px 16px rgba(76, 175, 80, 0.5);
             }
+
             100% {
                 transform: scale(1);
                 box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
@@ -285,9 +291,12 @@
         }
 
         @keyframes bounce {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0);
             }
+
             50% {
                 transform: translateY(-3px);
             }
@@ -491,7 +500,7 @@
             background: white;
             padding: var(--spacing-lg);
             border-radius: var(--radius-md);
-            border-left: 4px solid var(--primary-blue);
+            border: 2px solid #e9ecef;
             min-width: 120px;
             text-align: center;
         }
@@ -1000,9 +1009,9 @@
                 html += `
                     <div class="section-title">🏆 Faixas de Bônus disponíveis</div>
                     <div class="ranges-container">
-                        ${bonusRanges.slice(1).map((row, index) => 
-                            this.createRangeCard(row, currentRange, index)
-                        ).join('')}
+                        ${bonusRanges.slice(1).map((row, index) =>
+                    this.createRangeCard(row, currentRange, index)
+                ).join('')}
                     </div>
                 `;
 
@@ -1011,29 +1020,56 @@
 
             createBonusCalculationSection() {
                 const equationData = [
-                    { label: dataManager.getCellValue('V2') || 'Bônus nominal disponível', value: dataManager.getCellValue('V3') },
-                    { label: dataManager.getCellValue('Y2') || 'Bônus de faixa', value: dataManager.getCellValue('Y3') },
-                    { label: dataManager.getCellValue('Z2') || 'Prejuízos por erros', value: dataManager.getCellValue('Z3'), negative: true },
-                    { label: dataManager.getCellValue('AA2') || 'Resultado Final', value: dataManager.getCellValue('AA3'), highlight: true }
+                    {
+                        label: dataManager.getCellValue('V2') || 'Bônus nominal disponível',
+                        value: dataManager.getCellValue('V3'),
+                        operator: '+'
+                    },
+                    {
+                        label: dataManager.getCellValue('Y2') || 'Bônus de faixa',
+                        value: dataManager.getCellValue('Y3'),
+                        operator: '-'
+                    },
+                    {
+                        label: dataManager.getCellValue('Z2') || 'Prejuízos por erros',
+                        value: dataManager.getCellValue('Z3'),
+                        negative: true,
+                        operator: '='
+                    },
+                    {
+                        label: dataManager.getCellValue('AA2') || 'Resultado Final',
+                        value: dataManager.getCellValue('AA3'),
+                        highlight: true
+                    }
                 ];
 
-                const equationItems = equationData.map((item, index) => `
-                    <div class="equation-item ${item.highlight ? 'result' : ''}">
-                        <div class="data-label">${item.label}</div>
-                        <div class="data-value ${item.negative ? 'negative' : ''} ${item.highlight ? 'highlight' : ''}">
-                            ${item.value || 'N/A'}
-                        </div>
-                    </div>
-                `).join('');
+                let equationHtml = '';
+
+                equationData.forEach((item, index) => {
+                    // Add equation item
+                    equationHtml += `
+            <div class="equation-item ${item.highlight ? 'result' : ''}">
+                <div class="data-label">${item.label}</div>
+                <div class="data-value ${item.negative ? 'negative' : ''} ${item.highlight ? 'highlight' : ''}">
+                    ${item.value || 'N/A'}
+                </div>
+            </div>
+        `;
+
+                    // Add operator after each item except the last one
+                    if (index < equationData.length - 1) {
+                        equationHtml += `<div class="equation-operator">${item.operator}</div>`;
+                    }
+                });
 
                 return `
-                    <div class="section-title">🧮 Cálculo do Bônus da Equipe</div>
-                    <div class="equation-container">
-                        <div class="equation-row">
-                            ${equationItems}
-                        </div>
-                    </div>
-                `;
+        <div class="section-title">🧮 Cálculo do Bônus da Equipe</div>
+        <div class="equation-container">
+            <div class="equation-row">
+                ${equationHtml}
+            </div>
+        </div>
+    `;
             },
 
             createDashboardStructure(container) {
@@ -1126,9 +1162,9 @@
                     ${!hasActive ? this.createNoActiveRangeMessage() : ''}
                     <div class="section-title">🏆 Faixas de Bônus disponíveis</div>
                     <div class="ranges-container">
-                        ${bonusRanges.slice(1).map((row, index) => 
-                            components.createRangeCard(row, currentRange, index)
-                        ).join('')}
+                        ${bonusRanges.slice(1).map((row, index) =>
+                    components.createRangeCard(row, currentRange, index)
+                ).join('')}
                     </div>
                 `;
 
