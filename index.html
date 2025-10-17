@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valores da Planilha</title>
+    <title>Bonificação da Equipe</title>
     <style>
         /* ===== RESET & BASE STYLES ===== */
         * {
@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             padding: 20px;
             color: #333;
@@ -82,18 +82,19 @@
         }
 
         .section-title {
-            font-size: 1.2rem;
-            color: #667eea;
+            font-size: 1.3rem;
+            color: #1e3c72;
             margin: 25px 0 15px 0;
             padding-bottom: 8px;
             border-bottom: 2px solid #f0f0f0;
+            font-weight: 600;
         }
 
         /* ===== AUTO-REFRESH PROGRESS ===== */
         .refresh-progress-container {
             margin: -25px -25px 25px -25px;
             border-radius: 16px 16px 0 0;
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(30, 60, 114, 0.1);
             padding: 15px 25px;
         }
 
@@ -105,7 +106,7 @@
 
         .refresh-text {
             font-size: 0.85rem;
-            color: #667eea;
+            color: #1e3c72;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -120,7 +121,7 @@
         .progress-bar {
             width: 100%;
             height: 4px;
-            background: rgba(102, 126, 234, 0.2);
+            background: rgba(30, 60, 114, 0.2);
             border-radius: 2px;
             overflow: hidden;
             position: relative;
@@ -146,7 +147,7 @@
             background: white;
             border-radius: 12px;
             padding: 20px;
-            border-left: 6px solid #667eea;
+            border-left: 6px solid #1e3c72;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             position: relative;
@@ -161,6 +162,19 @@
         .range-card.current {
             border: 2px solid;
             transform: scale(1.02);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
         }
 
         .range-header {
@@ -189,6 +203,19 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .range-value {
@@ -215,7 +242,6 @@
 
         .range-card.gold.current {
             border-color: #FFD700;
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
         }
 
         .range-card.gold .range-name {
@@ -237,7 +263,6 @@
 
         .range-card.silver.current {
             border-color: #C0C0C0;
-            box-shadow: 0 0 0 3px rgba(192, 192, 192, 0.2);
         }
 
         .range-card.silver .range-name {
@@ -259,7 +284,6 @@
 
         .range-card.bronze.current {
             border-color: #CD7F32;
-            box-shadow: 0 0 0 3px rgba(205, 127, 50, 0.2);
         }
 
         .range-card.bronze .range-name {
@@ -281,7 +305,6 @@
 
         .range-card.default.current {
             border-color: #6c757d;
-            box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.2);
         }
 
         .range-card.default .range-name {
@@ -294,6 +317,34 @@
 
         .range-theme-bar.default {
             background: linear-gradient(90deg, #6c757d, #495057);
+        }
+
+        /* No Active Range State */
+        .no-active-range-message {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+            border-radius: 12px;
+            border-left: 6px solid #d63031;
+            color: #d63031;
+            margin-bottom: 20px;
+        }
+
+        .no-active-range-message .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .no-active-range-message h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #d63031;
+        }
+
+        .no-active-range-message p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.4;
         }
 
         /* ===== EQUATION STYLES ===== */
@@ -317,7 +368,7 @@
             background: white;
             padding: 15px;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1e3c72;
             min-width: 120px;
             text-align: center;
         }
@@ -330,7 +381,7 @@
         .equation-operator {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #667eea;
+            color: #1e3c72;
             min-width: 30px;
             text-align: center;
         }
@@ -388,36 +439,6 @@
             padding: 8px 12px;
             border-radius: 6px;
             border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        /* ===== BUTTON STYLES ===== */
-        .refresh-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: block;
-            margin: 20px auto;
-            width: 200px;
-        }
-
-        .refresh-btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-1px);
-        }
-
-        .refresh-btn:active {
-            transform: scale(0.98);
-        }
-
-        .refresh-btn.updating {
-            background: #ffc107;
-            cursor: not-allowed;
-            transform: none;
         }
 
         .update-indicator {
@@ -520,9 +541,16 @@
                 font-size: 1.4rem;
             }
 
-            .refresh-btn {
-                width: 100%;
-                max-width: 200px;
+            .no-active-range-message {
+                padding: 15px;
+            }
+
+            .no-active-range-message .icon {
+                font-size: 1.5rem;
+            }
+
+            .no-active-range-message h3 {
+                font-size: 1.1rem;
             }
         }
 
@@ -561,6 +589,18 @@
                 font-size: 1.1rem;
                 margin: 20px 0 12px 0;
             }
+
+            .no-active-range-message {
+                padding: 12px;
+            }
+
+            .no-active-range-message .icon {
+                font-size: 1.3rem;
+            }
+
+            .no-active-range-message h3 {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -571,8 +611,8 @@
             <div class="logo-header">
                 <img src="./assets/logo.png" alt="Pizzaria Logo" class="logo">
                 <div class="header-text">
-                    <h1>🍕 Bonificação em Tempo Real</h1>
-                    <p>Acompanhe seu rendimento e bônus</p>
+                    <h1>Bonificação da Equipe 🍕</h1>
+                    <p>Performance coletiva em tempo real</p>
                 </div>
             </div>
         </div>
@@ -581,7 +621,7 @@
             <!-- Progress bar para auto-refresh -->
             <div class="refresh-progress-container">
                 <div class="refresh-indicator">
-                    <span class="refresh-text" id="refresh-text">Próxima atualização automática: <span
+                    <span class="refresh-text" id="refresh-text">Próxima atualização automática em <span
                             id="countdown">30s</span></span>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
@@ -595,9 +635,6 @@
                 </div>
             </div>
 
-            <button class="refresh-btn" id="refresh-btn" onclick="loadSheetData()">
-                🔄 Atualizar Agora
-            </button>
             <div class="update-indicator" id="update-indicator">Atualizando...</div>
 
             <div class="last-update" id="last-update">
@@ -718,18 +755,11 @@
         }
 
         function showUpdatingState(show) {
-            const refreshBtn = document.getElementById('refresh-btn');
             const updateIndicator = document.getElementById('update-indicator');
 
             if (show) {
-                refreshBtn.classList.add('updating');
-                refreshBtn.disabled = true;
-                refreshBtn.innerHTML = '⏳ Atualizando...';
                 updateIndicator.classList.add('visible');
             } else {
-                refreshBtn.classList.remove('updating');
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = '🔄 Atualizar Dados';
                 updateIndicator.classList.remove('visible');
             }
         }
@@ -746,6 +776,11 @@
             return theme || { class: 'default', icon: '📊' };
         }
 
+        function hasActiveRange() {
+            const currentRange = getCellValue('X3') || '';
+            return currentRange && currentRange.toLowerCase() !== 'nenhuma' && currentRange !== 'N/A';
+        }
+
         function createBonusRangesSection() {
             const bonusRanges = getRangeValues('V8', 'W11');
             const currentRange = getCellValue('X3') || '';
@@ -754,64 +789,81 @@
                 return '<div class="error">Nenhuma faixa de bônus encontrada</div>';
             }
 
-            return `
-        <div class="section-title">🏆 Suas Faixas de Bônus</div>
-        <div class="ranges-container">
-            ${bonusRanges.slice(1).map((row, index) => {
-                const rangeName = row[0] || 'N/A';
-                const rangeValue = row[1] || 'N/A';
-                const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
-                const theme = getRangeTheme(rangeName);
+            const hasActive = hasActiveRange();
+            let html = '';
 
-                return `
-                    <div class="range-card ${theme.class} ${isCurrent ? 'current' : ''}">
-                        <div class="range-header">
-                            <span class="range-icon">${theme.icon}</span>
-                            <span class="range-name">${rangeName}</span>
-                            ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
-                        </div>
-                        <div class="range-value">${rangeValue}</div>
-                        <div class="range-theme-bar ${theme.class}"></div>
+            // Add message if no active range
+            if (!hasActive) {
+                html += `
+                    <div class="no-active-range-message">
+                        <div class="icon">😔</div>
+                        <h3>Nenhuma Faixa Ativa no Momento</h3>
+                        <p>A equipe ainda não atingiu nenhuma faixa de bônus.<br>
+                        <strong>Vamos melhorar nosso desempenho!</strong></p>
                     </div>
                 `;
-            }).join('')}
-        </div>
-    `;
+            }
+
+            html += `
+                <div class="section-title">🏆 Faixas de Bônus disponíveis</div>
+                <div class="ranges-container">
+                    ${bonusRanges.slice(1).map((row, index) => {
+                        const rangeName = row[0] || 'N/A';
+                        const rangeValue = row[1] || 'N/A';
+                        const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
+                        const theme = getRangeTheme(rangeName);
+
+                        return `
+                            <div class="range-card ${theme.class} ${isCurrent ? 'current' : ''}">
+                                <div class="range-header">
+                                    <span class="range-icon">${theme.icon}</span>
+                                    <span class="range-name">${rangeName}</span>
+                                    ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
+                                </div>
+                                <div class="range-value">${rangeValue}</div>
+                                <div class="range-theme-bar ${theme.class}"></div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            return html;
         }
 
         function createBonusCalculationSection() {
             return `
-        <div class="section-title">🧮 Cálculo do Seu Bônus</div>
-        <div class="equation-container">
-            <div class="equation-row">
-                <div class="equation-item">
-                    <div class="data-label">${getCellValue('V2') || 'Bônus'}</div>
-                    <div class="data-value">${getCellValue('V3') || 'N/A'}</div>
+                <div class="section-title">🧮 Cálculo do Bônus da Equipe</div>
+                <div class="equation-container">
+                    <div class="equation-row">
+                        <div class="equation-item">
+                            <div class="data-label">${getCellValue('V2') || 'Bônus nominal disponível'}</div>
+                            <div class="data-value">${getCellValue('V3') || 'N/A'}</div>
+                        </div>
+                        
+                        <div class="equation-operator">+</div>
+                        
+                        <div class="equation-item">
+                            <div class="data-label">${getCellValue('Y2') || 'Bônus de faixa'}</div>
+                            <div class="data-value">${getCellValue('Y3') || 'N/A'}</div>
+                        </div>
+                        
+                        <div class="equation-operator">-</div>
+                        
+                        <div class="equation-item">
+                            <div class="data-label">${getCellValue('Z2') || 'Prejuízos por erros'}</div>
+                            <div class="data-value negative">${getCellValue('Z3') || 'N/A'}</div>
+                        </div>
+                        
+                        <div class="equation-operator">=</div>
+                        
+                        <div class="equation-item result">
+                            <div class="data-label">${getCellValue('AA2') || 'Resultado Final'}</div>
+                            <div class="data-value highlight">${getCellValue('AA3') || 'N/A'}</div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="equation-operator">+</div>
-                
-                <div class="equation-item">
-                    <div class="data-label">${getCellValue('Y2') || 'Bônus'}</div>
-                    <div class="data-value">${getCellValue('Y3') || 'N/A'}</div>
-                </div>
-                
-                <div class="equation-operator">-</div>
-                
-                <div class="equation-item">
-                    <div class="data-label">${getCellValue('Z2') || 'Prejuízo'}</div>
-                    <div class="data-value negative">${getCellValue('Z3') || 'N/A'}</div>
-                </div>
-                
-                <div class="equation-operator">=</div>
-                
-                <div class="equation-item result">
-                    <div class="data-label">${getCellValue('AA2') || 'Resultado'}</div>
-                    <div class="data-value highlight">${getCellValue('AA3') || 'N/A'}</div>
-                </div>
-            </div>
-        </div>
-    `;
+            `;
         }
 
         function createDashboardStructure(container) {
@@ -825,32 +877,115 @@
         function updateBonusRangesSection() {
             const bonusRanges = getRangeValues('V8', 'W11');
             const currentRange = getCellValue('X3') || '';
-            const rangesContainer = document.querySelector('.ranges-container');
+            const dataContainer = document.getElementById('data-container');
 
-            if (rangesContainer && bonusRanges && bonusRanges.length > 1) {
-                const rangeCards = rangesContainer.querySelectorAll('.range-card');
-                rangeCards.forEach(card => card.classList.add('updating'));
+            if (dataContainer && bonusRanges && bonusRanges.length > 1) {
+                const hasActive = hasActiveRange();
+                let rangesHtml = '';
 
-                setTimeout(() => {
-                    rangesContainer.innerHTML = bonusRanges.slice(1).map((row, index) => {
-                        const rangeName = row[0] || 'N/A';
-                        const rangeValue = row[1] || 'N/A';
-                        const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
-                        const theme = getRangeTheme(rangeName);
-
-                        return `
-                    <div class="range-card ${theme.class} ${isCurrent ? 'current' : ''}">
-                        <div class="range-header">
-                            <span class="range-icon">${theme.icon}</span>
-                            <span class="range-name">${rangeName}</span>
-                            ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
+                // Add message if no active range
+                if (!hasActive) {
+                    rangesHtml += `
+                        <div class="no-active-range-message">
+                            <div class="icon">😔</div>
+                            <h3>Nenhuma Faixa Ativa no Momento</h3>
+                            <p>A equipe ainda não atingiu nenhuma faixa de bônus.<br>
+                            <strong>Vamos melhorar nosso desempenho!</strong></p>
                         </div>
-                        <div class="range-value">${rangeValue}</div>
-                        <div class="range-theme-bar ${theme.class}"></div>
+                    `;
+                }
+
+                rangesHtml += `
+                    <div class="section-title">🏆 Faixas de Bônus da Equipe</div>
+                    <div class="ranges-container">
+                        ${bonusRanges.slice(1).map((row, index) => {
+                            const rangeName = row[0] || 'N/A';
+                            const rangeValue = row[1] || 'N/A';
+                            const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
+                            const theme = getRangeTheme(rangeName);
+
+                            return `
+                                <div class="range-card ${theme.class} ${isCurrent ? 'current' : ''}">
+                                    <div class="range-header">
+                                        <span class="range-icon">${theme.icon}</span>
+                                        <span class="range-name">${rangeName}</span>
+                                        ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
+                                    </div>
+                                    <div class="range-value">${rangeValue}</div>
+                                    <div class="range-theme-bar ${theme.class}"></div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
-                    }).join('');
-                }, 300);
+
+                // Find and update the ranges section
+                const existingRangesSection = dataContainer.querySelector('.ranges-container');
+                const existingSectionTitle = dataContainer.querySelector('.section-title');
+                const existingMessage = dataContainer.querySelector('.no-active-range-message');
+                
+                if (existingRangesSection && existingSectionTitle) {
+                    // Update existing elements
+                    if (existingMessage) {
+                        existingMessage.outerHTML = !hasActive ? `
+                            <div class="no-active-range-message">
+                                <div class="icon">😔</div>
+                                <h3>Nenhuma Faixa Ativa no Momento</h3>
+                                <p>A equipe ainda não atingiu nenhuma faixa de bônus.<br>
+                                <strong>Vamos melhorar nosso desempenho!</strong></p>
+                            </div>
+                        ` : '';
+                    } else if (!hasActive) {
+                        existingSectionTitle.insertAdjacentHTML('beforebegin', `
+                            <div class="no-active-range-message">
+                                <div class="icon">😔</div>
+                                <h3>Nenhuma Faixa Ativa no Momento</h3>
+                                <p>A equipe ainda não atingiu nenhuma faixa de bônus.<br>
+                                <strong>Vamos melhorar nosso desempenho!</strong></p>
+                            </div>
+                        `);
+                    }
+
+                    // Update range cards
+                    const rangeCards = existingRangesSection.querySelectorAll('.range-card');
+                    rangeCards.forEach((card, index) => {
+                        const row = bonusRanges[index + 1];
+                        if (row) {
+                            const rangeName = row[0] || 'N/A';
+                            const rangeValue = row[1] || 'N/A';
+                            const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
+                            const theme = getRangeTheme(rangeName);
+                            
+                            const valueElement = card.querySelector('.range-value');
+                            const badgeElement = card.querySelector('.current-badge');
+                            
+                            // Update classes
+                            card.className = `range-card ${theme.class} ${isCurrent ? 'current' : ''}`;
+                            
+                            // Update values with animation
+                            if (valueElement) {
+                                valueElement.classList.add('updating');
+                                setTimeout(() => {
+                                    valueElement.textContent = rangeValue;
+                                    valueElement.classList.remove('updating');
+                                }, 150 * (index + 1));
+                            }
+                            
+                            // Update badge
+                            if (isCurrent && !badgeElement) {
+                                card.querySelector('.range-header').innerHTML += '<span class="current-badge">ATUAL</span>';
+                            } else if (!isCurrent && badgeElement) {
+                                badgeElement.remove();
+                            }
+                        }
+                    });
+                } else {
+                    // If elements don't exist, recreate the entire section
+                    const equationSection = dataContainer.querySelector('.equation-container');
+                    if (equationSection) {
+                        equationSection.insertAdjacentHTML('beforebegin', rangesHtml);
+                    }
+                }
             }
         }
 
@@ -916,15 +1051,15 @@
             } catch (error) {
                 console.error('❌ Error loading data:', error);
                 container.innerHTML = `
-            <div class="error">
-                <strong>Erro ao carregar dados:</strong><br>
-                ${error.message}<br><br>
-                Verifique:<br>
-                - ID da planilha<br>
-                - Chave da API<br>
-                - Permissões da planilha
-            </div>
-        `;
+                    <div class="error">
+                        <strong>Erro ao carregar dados:</strong><br>
+                        ${error.message}<br><br>
+                        Verifique:<br>
+                        - ID da planilha<br>
+                        - Chave da API<br>
+                        - Permissões da planilha
+                    </div>
+                `;
             } finally {
                 showUpdatingState(false);
             }
