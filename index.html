@@ -33,336 +33,6 @@
             color: white;
         }
 
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        /* ===== RANGE THEME STYLES ===== */
-        .data-item.highlight.gold {
-            border-left-color: #FFD700;
-            background: linear-gradient(135deg, #FFF9C4, #FFEB3B);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .data-item.highlight.silver {
-            border-left-color: #C0C0C0;
-            background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .data-item.highlight.bronze {
-            border-left-color: #CD7F32;
-            background: linear-gradient(135deg, #FFE0B2, #FFB74D);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .data-item.highlight.default {
-            border-left-color: #6c757d;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .range-theme-indicator {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 60px;
-            height: 100%;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-
-        .range-theme-indicator.gold {
-            background: linear-gradient(90deg, transparent, #FFD700);
-        }
-
-        .range-theme-indicator.silver {
-            background: linear-gradient(90deg, transparent, #C0C0C0);
-        }
-
-        .range-theme-indicator.bronze {
-            background: linear-gradient(90deg, transparent, #CD7F32);
-        }
-
-        .range-theme-indicator.default {
-            background: linear-gradient(90deg, transparent, #6c757d);
-        }
-
-        /* Shine effects for premium ranges */
-        .data-item.highlight.gold::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg,
-                    transparent,
-                    rgba(255, 215, 0, 0.1),
-                    transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        .data-item.highlight.silver::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg,
-                    transparent,
-                    rgba(192, 192, 192, 0.1),
-                    transparent);
-            transform: rotate(45deg);
-            animation: shine 4s infinite;
-        }
-
-        @keyframes shine {
-            0% {
-                transform: rotate(45deg) translateX(-100%);
-            }
-
-            100% {
-                transform: rotate(45deg) translateX(100%);
-            }
-        }
-
-        /* Text colors for themes */
-        .data-item.highlight.gold .data-value {
-            color: #B8860B;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-item.highlight.silver .data-value {
-            color: #696969;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-item.highlight.bronze .data-value {
-            color: #8B4513;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-item.highlight.default .data-value {
-            color: #6c757d;
-        }
-
-        /* ===== CARD & LAYOUT STYLES ===== */
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            color: #667eea;
-            margin: 25px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        /* ===== DATA GRID STYLES ===== */
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .data-item {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-            transition: all 0.3s ease;
-        }
-
-        .data-item.highlight {
-            border-left-color: #4CAF50;
-            background: #f1f8e9;
-        }
-
-        .data-item.updating {
-            background: #fff3cd;
-            border-left-color: #ffc107;
-        }
-
-        .data-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .data-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-
-        .data-value.large {
-            font-size: 1.8rem;
-        }
-
-        .data-value.highlight {
-            color: #4CAF50;
-            font-size: 1.6rem;
-        }
-
-        .data-value.negative {
-            color: #d63031;
-        }
-
-        .data-value.updating {
-            color: #856404;
-        }
-
-        /* ===== EQUATION STYLES ===== */
-        .equation-container {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #e9ecef;
-        }
-
-        .equation-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .equation-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            min-width: 120px;
-            text-align: center;
-        }
-
-        .equation-item.result {
-            border-left-color: #4CAF50;
-            background: #f1f8e9;
-        }
-
-        .equation-operator {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        /* ===== TABLE STYLES ===== */
-        .table-container {
-            overflow-x: auto;
-            margin: 15px 0;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-table th {
-            background: #667eea;
-            color: white;
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-
-        .data-table td.updating {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .data-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        /* ===== STATUS & FEEDBACK STYLES ===== */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .error {
-            background: #ffe6e6;
-            color: #d63031;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #d63031;
-            margin-bottom: 20px;
-        }
-
-        .last-update {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-
-        /* ===== BUTTON STYLES ===== */
-        .refresh-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: block;
-            margin: 20px auto;
-            width: 200px;
-        }
-
-        .refresh-btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-1px);
-        }
-
-        .refresh-btn:active {
-            transform: scale(0.98);
-        }
-
-        .refresh-btn.updating {
-            background: #ffc107;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* ===== HEADER COM LOGO ===== */
         .logo-header {
             display: flex;
             align-items: center;
@@ -390,9 +60,7 @@
             font-size: 2.2rem;
             margin-bottom: 8px;
             color: white;
-            /* Volta ao estilo original */
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            /* Volta ao estilo original */
         }
 
         .header-text p {
@@ -400,10 +68,28 @@
             opacity: 0.9;
             margin-bottom: 0;
             color: white;
-            /* Garantir que o subtítulo também fique branco */
         }
 
-        /* ===== PROGRESS BAR PARA AUTO-REFRESH ===== */
+        /* ===== CARD & LAYOUT STYLES ===== */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        /* ===== AUTO-REFRESH PROGRESS ===== */
         .refresh-progress-container {
             margin: -25px -25px 25px -25px;
             border-radius: 16px 16px 0 0;
@@ -446,439 +132,9 @@
             border-radius: 2px;
             width: 0%;
             transition: width 0.1s linear;
-            /* Transição mais rápida para suavidade */
-        }
-
-        /* ===== CORREÇÃO DA COR DA ÚLTIMA ATUALIZAÇÃO ===== */
-        .last-update {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        /* ===== RESPONSIVE ADJUSTMENTS ===== */
-        @media (max-width: 768px) {
-            .logo-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .logo {
-                width: 70px;
-                height: 77px;
-            }
-
-            .header-text h1 {
-                font-size: 1.8rem;
-            }
-
-            .header-text p {
-                font-size: 1rem;
-            }
-
-            .refresh-progress-container {
-                margin: -20px -15px 20px -15px;
-                padding: 12px 15px;
-            }
-
-            .refresh-text {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header-text h1 {
-                font-size: 1.6rem;
-            }
-
-            .logo {
-                width: 60px;
-                height: 66px;
-            }
-        }
-
-        .update-indicator {
-            text-align: center;
-            color: #ffc107;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .update-indicator.visible {
-            opacity: 1;
-        }
-
-        /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-
-            .card {
-                padding: 20px 15px;
-            }
-
-            .header h1 {
-                font-size: 1.7rem;
-            }
-
-            .data-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .data-item {
-                padding: 15px;
-            }
-
-            .equation-row {
-                gap: 10px;
-            }
-
-            .equation-item {
-                min-width: 100px;
-                padding: 12px 8px;
-            }
-
-            .equation-operator {
-                font-size: 1.2rem;
-            }
-
-            .data-value {
-                font-size: 1.3rem;
-            }
-
-            .data-value.large {
-                font-size: 1.5rem;
-            }
-
-            .data-value.highlight {
-                font-size: 1.4rem;
-            }
-
-            .refresh-btn {
-                width: 100%;
-                max-width: 200px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .equation-row {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-
-            .equation-operator {
-                min-width: auto;
-                padding: 5px 0;
-            }
-
-            .section-title {
-                font-size: 1.1rem;
-                margin: 20px 0 12px 0;
-            }
-        }
-
-        /* ===== ANIMATION & TRANSITION UTILITIES ===== */
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .slide-up {
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* ===== BONUS RANGES STYLES ===== */
-        .ranges-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .range-card {
-            background: var(--bg-white);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            border-left: 4px solid var(--primary-color);
-            box-shadow: var(--shadow-light);
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .range-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Range Themes */
-        .range-card.gold {
-            border-left-color: #FFD700;
-            background: linear-gradient(135deg, #FFF9C4, #FFEB3B);
-        }
-
-        .range-card.silver {
-            border-left-color: #C0C0C0;
-            background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
-        }
-
-        .range-card.bronze {
-            border-left-color: #CD7F32;
-            background: linear-gradient(135deg, #FFE0B2, #FFB74D);
-        }
-
-        .range-card.default {
-            border-left-color: #6c757d;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        }
-
-        /* Current Range Highlight */
-        .range-card.current-range {
-            border: 2px solid;
-            transform: scale(1.02);
-        }
-
-        .range-card.current-range.gold {
-            border-color: #FFD700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .range-card.current-range.silver {
-            border-color: #C0C0C0;
-            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
-        }
-
-        .range-card.current-range.bronze {
-            border-color: #CD7F32;
-            box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
-        }
-
-        .range-card.current-range.default {
-            border-color: #6c757d;
-            box-shadow: 0 0 20px rgba(108, 117, 125, 0.3);
-        }
-
-        /* Range Header */
-        .range-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .range-icon {
-            font-size: 2rem;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .range-info {
-            flex: 1;
-        }
-
-        .range-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .range-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--text-dark);
-        }
-
-        .range-card.gold .range-value {
-            color: #B8860B;
-        }
-
-        .range-card.silver .range-value {
-            color: #696969;
-        }
-
-        .range-card.bronze .range-value {
-            color: #8B4513;
-        }
-
-        .range-card.default .range-value {
-            color: #6c757d;
-        }
-
-        /* Current Badge */
-        .current-badge {
-            background: var(--success-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* Range Progress */
-        .range-progress {
-            margin-top: var(--spacing-md);
-        }
-
-        .range-progress .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .range-progress .progress-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 1s ease-in-out;
-        }
-
-        .range-progress .progress-fill.gold {
-            background: linear-gradient(90deg, #FFD700, #FFA000);
-        }
-
-        .range-progress .progress-fill.silver {
-            background: linear-gradient(90deg, #C0C0C0, #A0A0A0);
-        }
-
-        .range-progress .progress-fill.bronze {
-            background: linear-gradient(90deg, #CD7F32, #A0522D);
-        }
-
-        .range-progress .progress-fill.default {
-            background: linear-gradient(90deg, #6c757d, #495057);
-        }
-
-        /* Achievement Indicators */
-        .range-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 40px 40px 0;
-            border-color: transparent rgba(255, 255, 255, 0.3) transparent transparent;
-        }
-
-        .range-card.current-range::after {
-            content: '⭐';
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 1.2rem;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-3px);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .range-header {
-                flex-direction: column;
-                text-align: center;
-                gap: var(--spacing-sm);
-            }
-
-            .range-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.5rem;
-            }
-
-            .range-name {
-                font-size: 1rem;
-            }
-
-            .range-value {
-                font-size: 1.1rem;
-            }
-
-            .current-badge {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .range-card {
-                padding: var(--spacing-md);
-            }
-
-            .range-icon {
-                width: 35px;
-                height: 35px;
-                font-size: 1.2rem;
-            }
-        }
-
-        /* ===== BONUS RANGES CONTAINER ===== */
         .ranges-container {
             display: flex;
             flex-direction: column;
@@ -907,7 +163,6 @@
             transform: scale(1.02);
         }
 
-        /* Range Header */
         .range-header {
             display: flex;
             align-items: center;
@@ -936,7 +191,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Range Value */
         .range-value {
             font-size: 1.4rem;
             font-weight: bold;
@@ -953,9 +207,7 @@
             opacity: 0.8;
         }
 
-        /* ===== THEME STYLES FOR RANGE CARDS ===== */
-
-        /* Gold Theme */
+        /* Range Card Themes */
         .range-card.gold {
             border-left-color: #FFD700;
             background: linear-gradient(135deg, #FFF9C4, #FFEB3B);
@@ -978,7 +230,6 @@
             background: linear-gradient(90deg, #FFD700, #FFA500);
         }
 
-        /* Silver Theme */
         .range-card.silver {
             border-left-color: #C0C0C0;
             background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
@@ -1001,7 +252,6 @@
             background: linear-gradient(90deg, #C0C0C0, #A0A0A0);
         }
 
-        /* Bronze Theme */
         .range-card.bronze {
             border-left-color: #CD7F32;
             background: linear-gradient(135deg, #FFE0B2, #FFB74D);
@@ -1024,7 +274,6 @@
             background: linear-gradient(90deg, #CD7F32, #8B4513);
         }
 
-        /* Default Theme */
         .range-card.default {
             border-left-color: #6c757d;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
@@ -1047,8 +296,180 @@
             background: linear-gradient(90deg, #6c757d, #495057);
         }
 
+        /* ===== EQUATION STYLES ===== */
+        .equation-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .equation-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .equation-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .equation-item.result {
+            border-left-color: #4CAF50;
+            background: #f1f8e9;
+        }
+
+        .equation-operator {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .data-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .data-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .data-value.negative {
+            color: #d63031;
+        }
+
+        .data-value.highlight {
+            color: #4CAF50;
+            font-size: 1.6rem;
+        }
+
+        .data-value.updating {
+            color: #856404;
+        }
+
+        /* ===== STATUS & FEEDBACK STYLES ===== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #d63031;
+            margin-bottom: 20px;
+        }
+
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== BUTTON STYLES ===== */
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+        }
+
+        .refresh-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.98);
+        }
+
+        .refresh-btn.updating {
+            background: #ffc107;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .update-indicator {
+            text-align: center;
+            color: #ffc107;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .update-indicator.visible {
+            opacity: 1;
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px 15px;
+            }
+
+            .logo-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo {
+                width: 70px;
+                height: 77px;
+            }
+
+            .header-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-text p {
+                font-size: 1rem;
+            }
+
+            .refresh-progress-container {
+                margin: -20px -15px 20px -15px;
+                padding: 12px 15px;
+            }
+
+            .refresh-text {
+                font-size: 0.8rem;
+            }
+
             .ranges-container {
                 gap: 10px;
             }
@@ -1077,9 +498,44 @@
                 font-size: 0.65rem;
                 padding: 3px 6px;
             }
+
+            .equation-row {
+                gap: 10px;
+            }
+
+            .equation-item {
+                min-width: 100px;
+                padding: 12px 8px;
+            }
+
+            .equation-operator {
+                font-size: 1.2rem;
+            }
+
+            .data-value {
+                font-size: 1.3rem;
+            }
+
+            .data-value.highlight {
+                font-size: 1.4rem;
+            }
+
+            .refresh-btn {
+                width: 100%;
+                max-width: 200px;
+            }
         }
 
         @media (max-width: 480px) {
+            .header-text h1 {
+                font-size: 1.6rem;
+            }
+
+            .logo {
+                width: 60px;
+                height: 66px;
+            }
+
             .range-header {
                 flex-wrap: wrap;
             }
@@ -1088,6 +544,22 @@
                 flex: none;
                 width: 100%;
                 margin-bottom: 5px;
+            }
+
+            .equation-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .equation-operator {
+                min-width: auto;
+                padding: 5px 0;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                margin: 20px 0 12px 0;
             }
         }
     </style>
