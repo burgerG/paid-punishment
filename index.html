@@ -1137,73 +1137,19 @@
     <script>
         // CONFIGURATION - Edit these variables according to your needs
         const CONFIG = {
-            // Google Sheets spreadsheet ID (found in the spreadsheet URL)
             sheetId: '1YUnIjPwQGTNu-ePkHD-l0MSDTD_jn0-qXtAFUXVdBuI',
-
-            // Cell range you want to fetch (ex: 'Sheet1!A1:B10')
             range: 'Exemplo!A1:AB42',
-
-            // Your Google Sheets API key
             apiKey: 'AIzaSyBV61SGsAJ3X93TNG4Df_3bgj2yYCRbNEk',
-
-            // Auto-refresh interval in milliseconds (optional)
-            autoRefresh: 30000 // 30 seconds
+            autoRefresh: 30000
         };
 
         // Global object to store all spreadsheet data by cell address
         let spreadsheetData = {};
-
         let refreshCountdown;
         let progressInterval;
-        const TOTAL_REFRESH_TIME = CONFIG.autoRefresh; // 30 seconds
+        const TOTAL_REFRESH_TIME = CONFIG.autoRefresh;
 
-        // Function to start the countdown timer
-        function startCountdown() {
-            clearInterval(refreshCountdown);
-            clearInterval(progressInterval);
-
-            let timeLeft = TOTAL_REFRESH_TIME / 1000; // Convert to seconds
-            const countdownElement = document.getElementById('countdown');
-            const progressFill = document.getElementById('progress-fill');
-
-            // Reset progress bar
-            progressFill.style.width = '0%';
-            progressFill.style.transition = 'none'; // Remove transição para reset instantâneo
-
-            // Forçar reflow
-            progressFill.offsetHeight;
-
-            // Restaurar transição suave
-            progressFill.style.transition = 'width 0.1s linear';
-
-            let startTime = Date.now();
-
-            // Update progress bar smoothly
-            progressInterval = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min((elapsed / TOTAL_REFRESH_TIME) * 100, 100);
-
-                progressFill.style.width = `${progress}%`;
-
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                }
-            }, 50); // Update every 50ms for smooth animation
-
-            // Update countdown text
-            refreshCountdown = setInterval(() => {
-                timeLeft--;
-
-                if (timeLeft <= 0) {
-                    clearInterval(refreshCountdown);
-                    countdownElement.textContent = '0s';
-                } else {
-                    countdownElement.textContent = `${timeLeft}s`;
-                }
-            }, 1000);
-        }
-
-        // Function to convert row index to letter (1 -> A, 2 -> B, etc.)
+        // ===== UTILITY FUNCTIONS =====
         function indexToLetter(index) {
             let letter = '';
             while (index >= 0) {
@@ -1213,11 +1159,10 @@
             return letter;
         }
 
-        // Function to store all data in the global object by cell address
         function storeDataByCell(values) {
             if (!values || values.length === 0) return;
 
-            // Store each cell value with its address
+            spreadsheetData = {}; // Clear previous data
             values.forEach((row, rowIndex) => {
                 row.forEach((cellValue, colIndex) => {
                     const cellAddress = `${indexToLetter(colIndex)}${rowIndex + 1}`;
@@ -1228,22 +1173,17 @@
             console.log('📊 All data stored by cell address');
         }
 
-        // Function to get value from specific cell
         function getCellValue(cellAddress) {
             return spreadsheetData[cellAddress] || 'N/A';
         }
 
-        // Function to get range of values
         function getRangeValues(startCell, endCell) {
             const values = [];
-
-            // Parse cell addresses (simple implementation for A1 notation)
             const startCol = startCell.match(/[A-Z]+/)[0];
             const startRow = parseInt(startCell.match(/\d+/)[0]);
             const endCol = endCell.match(/[A-Z]+/)[0];
             const endRow = parseInt(endCell.match(/\d+/)[0]);
 
-            // Convert letters to numbers
             function colToNum(col) {
                 let num = 0;
                 for (let i = 0; i < col.length; i++) {
@@ -1255,7 +1195,6 @@
             const startColNum = colToNum(startCol);
             const endColNum = colToNum(endCol);
 
-            // Extract values from the range
             for (let row = startRow; row <= endRow; row++) {
                 const rowData = [];
                 for (let col = startColNum; col <= endColNum; col++) {
@@ -1268,7 +1207,44 @@
             return values;
         }
 
-        // Function to show updating state
+        // ===== COUNTDOWN & UI STATE MANAGEMENT =====
+        function startCountdown() {
+            clearInterval(refreshCountdown);
+            clearInterval(progressInterval);
+
+            let timeLeft = TOTAL_REFRESH_TIME / 1000;
+            const countdownElement = document.getElementById('countdown');
+            const progressFill = document.getElementById('progress-fill');
+
+            // Reset progress bar
+            progressFill.style.width = '0%';
+            progressFill.style.transition = 'none';
+            progressFill.offsetHeight; // Force reflow
+            progressFill.style.transition = 'width 0.1s linear';
+
+            let startTime = Date.now();
+
+            progressInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / TOTAL_REFRESH_TIME) * 100, 100);
+                progressFill.style.width = `${progress}%`;
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 50);
+
+            refreshCountdown = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(refreshCountdown);
+                    countdownElement.textContent = '0s';
+                } else {
+                    countdownElement.textContent = `${timeLeft}s`;
+                }
+            }, 1000);
+        }
+
         function showUpdatingState(show) {
             const refreshBtn = document.getElementById('refresh-btn');
             const updateIndicator = document.getElementById('update-indicator');
@@ -1286,26 +1262,100 @@
             }
         }
 
-        // Function to update individual values with smooth transition
-        function updateDashboardValues() {
+        // ===== DASHBOARD COMPONENTS =====
+        function getRangeTheme(rangeName) {
+            const themes = {
+                'ouro': { class: 'gold', icon: '🥇' },
+                'prata': { class: 'silver', icon: '🥈' },
+                'bronze': { class: 'bronze', icon: '🥉' }
+            };
 
-            // 1. Update bonus ranges table
-            updateBonusRangesSection();
-
-            // 2. Update bonus calculation equation
-            updateBonusCalculationSection();
-
-            console.log('✅ Dashboard values updated smoothly');
+            const theme = themes[rangeName.toLowerCase()];
+            return theme || { class: 'default', icon: '📊' };
         }
 
-        // Function to update bonus ranges section
+        function createBonusRangesSection() {
+            const bonusRanges = getRangeValues('V8', 'W11');
+            const currentRange = getCellValue('X3') || '';
+
+            if (!bonusRanges || bonusRanges.length <= 1) {
+                return '<div class="error">Nenhuma faixa de bônus encontrada</div>';
+            }
+
+            return `
+        <div class="section-title">🏆 Suas Faixas de Bônus</div>
+        <div class="ranges-container">
+            ${bonusRanges.slice(1).map((row, index) => {
+                const rangeName = row[0] || 'N/A';
+                const rangeValue = row[1] || 'N/A';
+                const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
+                const theme = getRangeTheme(rangeName);
+
+                return `
+                    <div class="range-card ${theme.class} ${isCurrent ? 'current' : ''}">
+                        <div class="range-header">
+                            <span class="range-icon">${theme.icon}</span>
+                            <span class="range-name">${rangeName}</span>
+                            ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
+                        </div>
+                        <div class="range-value">${rangeValue}</div>
+                        <div class="range-theme-bar ${theme.class}"></div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+        }
+
+        function createBonusCalculationSection() {
+            return `
+        <div class="section-title">🧮 Cálculo do Seu Bônus</div>
+        <div class="equation-container">
+            <div class="equation-row">
+                <div class="equation-item">
+                    <div class="data-label">${getCellValue('V2') || 'Bônus'}</div>
+                    <div class="data-value">${getCellValue('V3') || 'N/A'}</div>
+                </div>
+                
+                <div class="equation-operator">+</div>
+                
+                <div class="equation-item">
+                    <div class="data-label">${getCellValue('Y2') || 'Bônus'}</div>
+                    <div class="data-value">${getCellValue('Y3') || 'N/A'}</div>
+                </div>
+                
+                <div class="equation-operator">-</div>
+                
+                <div class="equation-item">
+                    <div class="data-label">${getCellValue('Z2') || 'Prejuízo'}</div>
+                    <div class="data-value negative">${getCellValue('Z3') || 'N/A'}</div>
+                </div>
+                
+                <div class="equation-operator">=</div>
+                
+                <div class="equation-item result">
+                    <div class="data-label">${getCellValue('AA2') || 'Resultado'}</div>
+                    <div class="data-value highlight">${getCellValue('AA3') || 'N/A'}</div>
+                </div>
+            </div>
+        </div>
+    `;
+        }
+
+        function createDashboardStructure(container) {
+            let html = '';
+            html += createBonusRangesSection();
+            html += createBonusCalculationSection();
+            container.innerHTML = html;
+        }
+
+        // ===== UPDATE FUNCTIONS =====
         function updateBonusRangesSection() {
             const bonusRanges = getRangeValues('V8', 'W11');
             const currentRange = getCellValue('X3') || '';
             const rangesContainer = document.querySelector('.ranges-container');
 
-            if (rangesContainer) {
-                // Add updating class to all cards
+            if (rangesContainer && bonusRanges && bonusRanges.length > 1) {
                 const rangeCards = rangesContainer.querySelectorAll('.range-card');
                 rangeCards.forEach(card => card.classList.add('updating'));
 
@@ -1314,38 +1364,17 @@
                         const rangeName = row[0] || 'N/A';
                         const rangeValue = row[1] || 'N/A';
                         const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
-
-                        // Determine theme based on range name
-                        let themeClass = 'default';
-                        let themeIcon = '⚫';
-
-                        switch (rangeName.toLowerCase()) {
-                            case 'ouro':
-                                themeClass = 'gold';
-                                themeIcon = '🥇';
-                                break;
-                            case 'prata':
-                                themeClass = 'silver';
-                                themeIcon = '🥈';
-                                break;
-                            case 'bronze':
-                                themeClass = 'bronze';
-                                themeIcon = '🥉';
-                                break;
-                            default:
-                                themeClass = 'default';
-                                themeIcon = '📊';
-                        }
+                        const theme = getRangeTheme(rangeName);
 
                         return `
-                    <div class="range-card ${themeClass} ${isCurrent ? 'current' : ''}">
+                    <div class="range-card ${theme.class} ${isCurrent ? 'current' : ''}">
                         <div class="range-header">
-                            <span class="range-icon">${themeIcon}</span>
+                            <span class="range-icon">${theme.icon}</span>
                             <span class="range-name">${rangeName}</span>
                             ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
                         </div>
                         <div class="range-value">${rangeValue}</div>
-                        <div class="range-theme-bar ${themeClass}"></div>
+                        <div class="range-theme-bar ${theme.class}"></div>
                     </div>
                 `;
                     }).join('');
@@ -1356,174 +1385,64 @@
         function updateBonusCalculationSection() {
             const equationItems = document.querySelectorAll('.equation-item');
             const equationValues = [
-                getCellValue('V3'), // Bônus 1
-                getCellValue('Y3'), // Bônus 2
-                getCellValue('Z3'), // Prejuízo
-                getCellValue('AA3') // Resultado
+                getCellValue('V3'),
+                getCellValue('Y3'),
+                getCellValue('Z3'),
+                getCellValue('AA3')
             ];
 
             equationItems.forEach((item, index) => {
                 const valueElement = item.querySelector('.data-value');
-                if (valueElement && equationValues[index]) {
+                if (valueElement) {
                     valueElement.classList.add('updating');
                     setTimeout(() => {
-                        valueElement.textContent = equationValues[index];
+                        valueElement.textContent = equationValues[index] || 'N/A';
                         valueElement.classList.remove('updating');
                     }, 150 * (index + 1));
                 }
             });
         }
 
-        // Function to create bonus ranges table with themed UI
-        function createBonusRangesSection() {
-            const bonusRanges = getRangeValues('V8', 'W11');
-            const currentRange = getCellValue('X3') || '';
-
-            return `
-        <div class="ranges-container">
-            ${bonusRanges.slice(1).map((row, index) => {
-                const rangeName = row[0] || 'N/A';
-                const rangeValue = row[1] || 'N/A';
-                const isCurrent = rangeName.toLowerCase() === currentRange.toLowerCase();
-
-                // Determine theme based on range name
-                let themeClass = 'default';
-                let themeIcon = '⚫';
-
-                switch (rangeName.toLowerCase()) {
-                    case 'ouro':
-                        themeClass = 'gold';
-                        themeIcon = '🥇';
-                        break;
-                    case 'prata':
-                        themeClass = 'silver';
-                        themeIcon = '🥈';
-                        break;
-                    case 'bronze':
-                        themeClass = 'bronze';
-                        themeIcon = '🥉';
-                        break;
-                    default:
-                        themeClass = 'default';
-                        themeIcon = '📊';
-                }
-
-                return `
-                    <div class="range-card ${themeClass} ${isCurrent ? 'current' : ''}">
-                        <div class="range-header">
-                            <span class="range-icon">${themeIcon}</span>
-                            <span class="range-name">${rangeName}</span>
-                            ${isCurrent ? '<span class="current-badge">ATUAL</span>' : ''}
-                        </div>
-                        <div class="range-value">${rangeValue}</div>
-                        <div class="range-theme-bar ${themeClass}"></div>
-                    </div>
-                `;
-            }).join('')}
-        </div>
-    `;
+        function updateDashboardValues() {
+            updateBonusRangesSection();
+            updateBonusCalculationSection();
+            console.log('✅ Dashboard values updated smoothly');
         }
 
-        // Function to create bonus calculation equation
-        function createBonusCalculationSection() {
-            return `
-        <div class="equation-container">
-            <div class="equation-row">
-                <!-- Bônus V2/V3 -->
-                <div class="equation-item">
-                    <div class="data-label">${getCellValue('V2') || 'Bônus'}</div>
-                    <div class="data-value">${getCellValue('V3') || 'N/A'}</div>
-                </div>
-                
-                <div class="equation-operator">+</div>
-                
-                <!-- Bônus Y2/Y3 -->
-                <div class="equation-item">
-                    <div class="data-label">${getCellValue('Y2') || 'Bônus'}</div>
-                    <div class="data-value">${getCellValue('Y3') || 'N/A'}</div>
-                </div>
-                
-                <div class="equation-operator">-</div>
-                
-                <!-- Prejuízo Z2/Z3 -->
-                <div class="equation-item">
-                    <div class="data-label">${getCellValue('Z2') || 'Prejuízo'}</div>
-                    <div class="data-value negative">${getCellValue('Z3') || 'N/A'}</div>
-                </div>
-                
-                <div class="equation-operator">=</div>
-                
-                <!-- Resultado AA2/AA3 -->
-                <div class="equation-item result">
-                    <div class="data-label">${getCellValue('AA2') || 'Resultado'}</div>
-                    <div class="data-value highlight">${getCellValue('AA3') || 'N/A'}</div>
-                </div>
-            </div>
-        </div>
-    `;
-        }
-
-        // Main function to create initial dashboard structure
-        function createDashboardStructure(container) {
-            let html = '';
-
-            // 1. Bonus ranges section
-            html += createBonusRangesSection();
-
-            // 2. Bonus calculation section (bottom)
-            html += createBonusCalculationSection();
-
-            container.innerHTML = html;
-        }
-
-        // Update the main load function to start countdown
+        // ===== MAIN DATA LOADING =====
         async function loadSheetData() {
             const container = document.getElementById('data-container');
             const lastUpdate = document.getElementById('last-update');
 
             try {
-                // Show updating state
                 showUpdatingState(true);
 
-                // Build API URL
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${CONFIG.range}?key=${CONFIG.apiKey}`;
-
                 console.log('📡 Making request to Google Sheets API...');
 
-                // Make request
                 const response = await fetch(url);
-
                 if (!response.ok) {
                     throw new Error(`Erro na API: ${response.status}`);
                 }
 
                 const data = await response.json();
-
-                // Store all data in global object
                 storeDataByCell(data.values);
 
-                // Check if this is the first load
                 const isFirstLoad = container.querySelector('.loading') !== null;
-
                 if (isFirstLoad) {
-                    // Create dashboard structure for the first time
                     createDashboardStructure(container);
                 } else {
-                    // Update existing values smoothly
                     updateDashboardValues();
                 }
 
-                // Update timestamp
                 lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
 
-                // Restart countdown after successful update
                 if (CONFIG.autoRefresh) {
                     startCountdown();
                 }
 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
-
                 container.innerHTML = `
             <div class="error">
                 <strong>Erro ao carregar dados:</strong><br>
@@ -1535,23 +1454,18 @@
             </div>
         `;
             } finally {
-                // Hide updating state
                 showUpdatingState(false);
             }
         }
 
-        // Initialization
+        // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function () {
             console.log('🚀 WebApp initialized');
-
-            // Load data on first run
             loadSheetData();
 
-            // Set up auto-refresh if enabled
             if (CONFIG.autoRefresh) {
                 console.log(`🔄 Auto-refresh enabled: ${CONFIG.autoRefresh}ms`);
                 setInterval(loadSheetData, CONFIG.autoRefresh);
-                // Countdown will be started after first load
             }
         });
     </script>
