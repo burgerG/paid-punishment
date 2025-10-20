@@ -474,7 +474,7 @@
             margin: var(--spacing-lg) 0;
             border: 2px solid #e9ecef;
         }
-        
+
         /* ===== EQUATION STYLES ===== */
         .equation-row {
             display: flex;
@@ -880,10 +880,111 @@
                 padding: var(--spacing-sm) var(--spacing-md);
             }
         }
+
+        /* ===== SPLASH SCREEN STYLES ===== */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            color: var(--text-light);
+            width: 50%;
+            padding: var(--spacing-xl);
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: 132px;
+            margin-bottom: var(--spacing-xl);
+            filter: drop-shadow(var(--text-shadow));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .splash-text {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-lg);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: var(--text-shadow);
+        }
+
+        .splash-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .splash-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="./assets/logo.png" alt="Pizzaria Logo" class="splash-logo">
+            <div class="splash-text" id="splash-text">
+                Iniciando carregamento de dados...
+            </div>
+            <div class="splash-progress" id="splash-progress"></div>
+        </div>
+    </div>
+    <audio id="myAudio">
+        <source src="https://www.myinstants.com/media/sounds/tema-triste-toguro.mp3" type="audio/ogg">
+        <source src="https://www.myinstants.com/media/sounds/tema-triste-toguro.mp3" type="audio/mpeg">
+    </audio>
     <div class="container">
         <div class="header">
             <div class="logo-header">
@@ -1009,6 +1110,84 @@
             }
         };
 
+        // ===== SPLASH SCREEN MANAGER =====
+        const splashManager = {
+            hasBeenShown: false,
+            element: null,
+            textElement: null,
+            progressElement: null,
+            currentIndex: 0,
+            totalCells: 0,
+            animationInterval: null,
+
+            init() {
+                this.element = document.getElementById('splash-screen');
+                this.textElement = document.getElementById('splash-text');
+                this.progressElement = document.getElementById('splash-progress');
+            },
+
+            show() {
+                this.hasBeenShown = true
+                if (this.element) {
+                    this.element.classList.remove('hidden');
+                    this.setText('Conectando à planilha...');
+                }
+            },
+
+            hide() {
+                if (this.element) {
+                    document.getElementById("myAudio").play();
+                    this.element.classList.add('hidden');
+                    this.stopIteration();
+                }
+            },
+
+            setText(message) {
+                if (this.textElement) {
+                    this.textElement.textContent = message;
+                }
+            },
+
+            startDataIteration(data) {
+                if (!data || typeof data !== 'object') return;
+
+                const cells = Object.entries(data);
+                this.totalCells = cells.length;
+                this.currentIndex = 0;
+
+                this.stopIteration();
+
+                this.animationInterval = setInterval(() => {
+                    if (this.currentIndex < this.totalCells) {
+                        const [cellAddress, cellValue] = cells[this.currentIndex];
+                        const progress = Math.round((this.currentIndex / this.totalCells) * 100) + 2;
+
+                        this.setText(`Processando célula ${cellAddress}: ${cellValue || ''}`);
+                        this.updateProgress(progress);
+
+                        this.currentIndex = this.currentIndex + 16;
+                    } else {
+                        this.stopIteration();
+                        this.setText('👍');
+                        setTimeout(() => this.hide(), 2000);
+                    }
+                }, 25); // Speed of iteration (adjust as needed)
+            },
+
+            updateProgress(percentage) {
+                if (this.progressElement) {
+                    this.progressElement.style.background = `linear-gradient(90deg, var(--success-green) ${percentage}%, rgba(255, 255, 255, 0.2) ${percentage}%)`;
+                }
+            },
+
+            stopIteration() {
+                if (this.animationInterval) {
+                    clearInterval(this.animationInterval);
+                    this.animationInterval = null;
+                }
+            },
+        };
+
         // ===== DATA MANAGEMENT =====
         const dataManager = {
             storeDataByCell(values) {
@@ -1024,8 +1203,8 @@
 
                 console.log('📊 All data stored by cell address');
 
-                // Prepara os dados da tabela detalhada sempre que novos dados são carregados
-                this.prepareDetailedTableData();
+                // Start splash screen iteration with the new data
+                splashManager.startDataIteration(state.spreadsheetData);
             },
 
             getCellValue(cellAddress) {
@@ -1531,6 +1710,11 @@
             const container = document.getElementById('data-container');
 
             try {
+                if (!splashManager.hasBeenShown) {
+                    splashManager.show(); // Show splash screen
+                    splashManager.setText('Iniciando requisição à API...');
+                }
+
                 uiManager.showUpdatingState(true);
 
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${CONFIG.range}?key=${CONFIG.apiKey}`;
@@ -1540,6 +1724,8 @@
                 if (!response.ok) {
                     throw new Error(`Erro na API: ${response.status}`);
                 }
+
+                splashManager.setText('Processando resposta da API...');
 
                 const data = await response.json();
                 dataManager.storeDataByCell(data.values);
@@ -1561,18 +1747,22 @@
 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
+                splashManager.setText(`Erro: ${error.message}`);
+                setTimeout(() => splashManager.hide(), 2000);
+
                 container.innerHTML = `
-                    <div class="error">
-                        <strong>Erro ao carregar dados:</strong><br>
-                        ${error.message}<br><br>
-                        Verifique:<br>
-                        - ID da planilha<br>
-                        - Chave da API<br>
-                        - Permissões da planilha
-                    </div>
-                `;
+            <div class="error">
+                <strong>Erro ao carregar dados:</strong><br>
+                ${error.message}<br><br>
+                Verifique:<br>
+                - ID da planilha<br>
+                - Chave da API<br>
+                - Permissões da planilha
+            </div>
+        `;
             } finally {
                 uiManager.showUpdatingState(false);
+                // Note: splashManager.hide() is called automatically after iteration
             }
         }
 
@@ -1580,7 +1770,10 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log('🚀 WebApp initialized');
 
-            // Adiciona evento de clique ao botão de visão detalhada
+            // Initialize splash manager
+            splashManager.init();
+
+            // Add event listener for detailed view button
             const toggleButton = document.getElementById('toggle-detailed-view');
             if (toggleButton) {
                 toggleButton.addEventListener('click', uiManager.toggleDetailedView);
