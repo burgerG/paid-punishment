@@ -1212,6 +1212,8 @@
 
                 console.log('📊 All data stored by cell address');
 
+                this.prepareDetailedTableData();
+
                 // Start splash screen iteration with the new data
                 splashManager.startDataIteration(state.spreadsheetData);
             },
