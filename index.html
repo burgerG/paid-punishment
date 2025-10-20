@@ -1142,7 +1142,7 @@
             hide() {
                 if (!this.isDone) {
                     let hasRange = components.hasActiveRange()
-                    let audio = hasRange ? document.getElementById("audio-theme") : document.getElementById("audio-orgulho");
+                    let audio = hasRange ? document.getElementById("audio-orgulho") : document.getElementById("audio-theme");
                     console.log(audio)
                     audio.play()
                     this.element.classList.add('hidden');
