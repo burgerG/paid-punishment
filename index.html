@@ -467,15 +467,15 @@
             line-height: 1.4;
         }
 
-        /* ===== EQUATION STYLES ===== */
-        .equation-container {
+        .generic-container {
             background: #f8f9fa;
             border-radius: var(--radius-lg);
             padding: var(--spacing-xl);
             margin: var(--spacing-lg) 0;
             border: 2px solid #e9ecef;
         }
-
+        
+        /* ===== EQUATION STYLES ===== */
         .equation-row {
             display: flex;
             align-items: center;
@@ -841,6 +841,43 @@
 
             .no-active-range-message h3 {
                 font-size: 1rem;
+            }
+        }
+
+        /* ===== MONTHLY GOALS STYLES ===== */
+        .goals-section {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .goals-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .goals-list li {
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-light);
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .goals-list li:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .goals-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive design for goals section */
+        @media (max-width: 768px) {
+            .goals-list li {
+                padding: var(--spacing-sm) var(--spacing-md);
             }
         }
     </style>
@@ -1254,7 +1291,7 @@
 
                 return `
         <div class="section-title">🧮 Cálculo do Bônus da Equipe</div>
-        <div class="equation-container">
+        <div id="equation-container" class="generic-container">
             <div class="equation-row">
                 ${equationHtml}
             </div>
@@ -1299,12 +1336,10 @@
 
             createDashboardStructure(container) {
                 let html = '';
+                html += goalsComponent.createGoalsSection();
                 html += this.createBonusRangesSection();
                 html += this.createBonusCalculationSection();
                 container.innerHTML = html;
-
-                // Prepara a tabela detalhada (mesmo que não esteja visível)
-                this.updateDetailedTable();
             }
         };
 
@@ -1396,7 +1431,7 @@
                     </div>
                 `;
 
-                const equationSection = dataContainer.querySelector('.equation-container');
+                const equationSection = dataContainer.querySelector('#equation-container');
                 if (equationSection) {
                     equationSection.insertAdjacentHTML('beforebegin', rangesHtml);
                 }
@@ -1431,12 +1466,65 @@
             },
 
             updateDashboardValues() {
+                goalsComponent.updateGoalsSection(); // Atualiza metas
                 this.updateBonusRangesSection();
                 this.updateBonusCalculationSection();
-                this.updateDetailedTable(); // Atualiza a tabela detalhada também
+                this.updateDetailedTable();
                 console.log('✅ Dashboard values updated smoothly');
             }
         };
+
+        // ===== GOALS COMPONENT =====
+        const goalsComponent = {
+            createGoalsSection() {
+                const goalsTitle = dataManager.getCellValue('V33') || 'Metas do Mês';
+                const goalsContent = dataManager.getCellValue('V34') || '';
+
+                // Parse the goals string into an array
+                const goalsList = this.parseGoalsString(goalsContent);
+
+                return `
+            <div class="goals-section">
+                <div class="section-title">🎯 ${goalsTitle}</div>
+                <div class="generic-container">
+                    <ul class="goals-list">
+                        ${goalsList.map(goal => `
+                            <li>${goal.trim()}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
+            },
+
+            parseGoalsString(goalsString) {
+                if (!goalsString) return ['Nenhuma meta definida para este mês'];
+
+                // Split by common separators: new lines, commas, semicolons, or bullets
+                const goals = goalsString.split(/\n|,|;|•|\*/)
+                    .filter(goal => goal.trim().length > 0)
+                    .map(goal => goal.trim());
+
+                return goals.length > 0 ? goals : ['Nenhuma meta definida para este mês'];
+            },
+
+            updateGoalsSection() {
+                const goalsTitle = document.getElementById('goals-title');
+                const goalsList = document.getElementById('goals-list');
+
+                if (goalsTitle && goalsList) {
+                    const title = dataManager.getCellValue('V33') || 'Metas do Mês';
+                    const content = dataManager.getCellValue('V34') || '';
+                    const goals = this.parseGoalsString(content);
+
+                    goalsTitle.textContent = title;
+                    goalsList.innerHTML = goals.map(goal => `
+                <li>${goal.trim()}</li>
+            `).join('');
+                }
+            }
+        };
+
 
         // ===== MAIN DATA LOADING =====
         async function loadSheetData() {
