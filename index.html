@@ -756,6 +756,99 @@
                 font-size: 1rem;
             }
         }
+
+        /* Estilos para o botão e tabela detalhada */
+        .detailed-view-toggle {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .detailed-view-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-light);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-light);
+        }
+
+        .detailed-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .detailed-table-container {
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-normal);
+        }
+
+        .detailed-table-container.hidden {
+            display: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e9ecef;
+            box-shadow: var(--shadow-light);
+        }
+
+        .detailed-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.85rem;
+        }
+
+        .detailed-table th {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-light);
+            padding: var(--spacing-md) var(--spacing-sm);
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-blue);
+            position: sticky;
+            top: 0;
+        }
+
+        .detailed-table td {
+            padding: var(--spacing-sm);
+            border-bottom: 1px solid #f0f0f0;
+            color: var(--text-dark);
+        }
+
+        .detailed-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .detailed-table tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .detailed-table tr.highlight-row {
+            background-color: #e3f2fd;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .detailed-table {
+                font-size: 0.75rem;
+            }
+
+            .detailed-table th,
+            .detailed-table td {
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .detailed-view-btn {
+                padding: var(--spacing-sm) var(--spacing-lg);
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 
@@ -789,8 +882,25 @@
                 </div>
             </div>
 
+            <!-- Container da tabela detalhada (inicialmente oculto) -->
+            <div id="detailed-table-container" class="detailed-table-container hidden">
+                <div class="section-title">📋 Detalhamento Completo</div>
+                <div class="table-wrapper">
+                    <table id="detailed-table" class="detailed-table">
+                        <!-- A tabela será populada via JavaScript -->
+                    </table>
+                </div>
+            </div>
+
             <div class="sheet-info" id="sheet-info">
                 Mês: Carregando...
+            </div>
+
+            <!-- Botão de visão detalhada -->
+            <div class="detailed-view-toggle">
+                <button id="toggle-detailed-view" class="detailed-view-btn">
+                    📊 Visão Detalhada
+                </button>
             </div>
 
             <div class="update-indicator" id="update-indicator">Atualizando...</div>
@@ -815,7 +925,9 @@
             spreadsheetData: {},
             refreshCountdown: null,
             progressInterval: null,
-            TOTAL_REFRESH_TIME: CONFIG.autoRefresh
+            TOTAL_REFRESH_TIME: CONFIG.autoRefresh,
+            isDetailedViewVisible: false,
+            detailedTableData: null
         };
 
         // ===== UTILITY FUNCTIONS =====
@@ -841,6 +953,28 @@
                 const col = cellAddress.match(/[A-Z]+/)[0];
                 const row = parseInt(cellAddress.match(/\d+/)[0]);
                 return { col, row };
+            },
+
+            // Nova função para converter valor monetário para número
+            parseCurrency(value) {
+                if (!value || value === 'N/A') return 0;
+                
+                // Remove símbolos de moeda, espaços e converte vírgula para ponto
+                const cleaned = value.toString()
+                    .replace(/[R$\s]/g, '')
+                    .replace(/\./g, '')
+                    .replace(',', '.');
+                
+                const number = parseFloat(cleaned);
+                return isNaN(number) ? 0 : number;
+            },
+
+            // Nova função para formatar número como moeda
+            formatCurrency(value) {
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(value);
             }
         };
 
@@ -858,6 +992,9 @@
                 });
 
                 console.log('📊 All data stored by cell address');
+                
+                // Prepara os dados da tabela detalhada sempre que novos dados são carregados
+                this.prepareDetailedTableData();
             },
 
             getCellValue(cellAddress) {
@@ -882,6 +1019,46 @@
                 }
 
                 return values;
+            },
+
+            // Novo método para preparar os dados da tabela simplificada
+            prepareDetailedTableData() {
+                const tableData = [];
+                
+                // Obtém os títulos das colunas
+                const dayTitle = this.getCellValue('A2') || 'Dia';
+                const valueTitle = this.getCellValue('B2') || 'Total de Descontos';
+                const errorsTitle = this.getCellValue('S2') || 'Erros Acumulados';
+
+                tableData.push([dayTitle, valueTitle, errorsTitle]);
+
+                // Processa cada linha de dados (A3:S33)
+                for (let row = 3; row <= 33; row++) {
+                    const day = this.getCellValue(`A${row}`);
+                    
+                    // Se não há dia, para o processamento
+                    if (!day || day === 'N/A') continue;
+
+                    // Calcula a soma das colunas B até Q
+                    let totalValue = 0;
+                    for (let col = 2; col <= 17; col++) { // B=2, Q=17
+                        const cellValue = this.getCellValue(`${utils.indexToLetter(col)}${row}`);
+                        totalValue += utils.parseCurrency(cellValue);
+                    }
+
+                    // Obtém os erros acumulados da coluna S
+                    const accumulatedErrors = this.getCellValue(`S${row}`);
+
+                    tableData.push([day, utils.formatCurrency(totalValue), accumulatedErrors]);
+                }
+
+                state.detailedTableData = tableData;
+                console.log('📋 Detailed table data prepared');
+            },
+
+            // Método para obter os dados preparados da tabela
+            getDetailedTableData() {
+                return state.detailedTableData;
             }
         };
 
@@ -938,6 +1115,27 @@
             updateLastUpdate() {
                 const lastUpdate = document.getElementById('last-update');
                 lastUpdate.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
+            },
+
+            // Método corrigido para alternar a visão detalhada
+            toggleDetailedView() {
+                const container = document.getElementById('detailed-table-container');
+                const button = document.getElementById('toggle-detailed-view');
+
+                state.isDetailedViewVisible = !state.isDetailedViewVisible;
+
+                if (state.isDetailedViewVisible) {
+                    container.classList.remove('hidden');
+                    button.textContent = '📊 Ocultar Detalhes';
+                    button.style.background = 'linear-gradient(135deg, var(--error-red), #c0392b)';
+                    
+                    // Garante que a tabela está atualizada
+                    components.updateDetailedTable();
+                } else {
+                    container.classList.add('hidden');
+                    button.textContent = '📊 Visão Detalhada';
+                    button.style.background = 'linear-gradient(135deg, var(--primary-blue), var(--secondary-blue))';
+                }
             }
         };
 
@@ -1046,7 +1244,6 @@
                 let equationHtml = '';
 
                 equationData.forEach((item, index) => {
-                    // Add equation item
                     equationHtml += `
             <div class="equation-item ${item.highlight ? 'result' : ''}">
                 <div class="data-label">${item.label}</div>
@@ -1056,7 +1253,6 @@
             </div>
         `;
 
-                    // Add operator after each item except the last one
                     if (index < equationData.length - 1) {
                         equationHtml += `<div class="equation-operator">${item.operator}</div>`;
                     }
@@ -1072,11 +1268,49 @@
     `;
             },
 
+            // Método simplificado para criar a tabela detalhada
+            createDetailedTable() {
+                const tableData = dataManager.getDetailedTableData();
+                if (!tableData || tableData.length === 0) {
+                    return '<tr><td colspan="3" class="no-data">Nenhum dado disponível</td></tr>';
+                }
+
+                let tableHTML = '';
+
+                // Cria as linhas de dados
+                tableData.forEach((row, rowIndex) => {
+                    const isHeader = rowIndex === 0;
+                    const tag = isHeader ? 'th' : 'td';
+                    const rowClass = isHeader ? 'table-header' : '';
+
+                    tableHTML += `<tr class="${rowClass}">`;
+                    
+                    row.forEach(cell => {
+                        tableHTML += `<${tag}>${cell || ''}</${tag}>`;
+                    });
+                    
+                    tableHTML += '</tr>';
+                });
+
+                return tableHTML;
+            },
+
+            // Novo método para atualizar a tabela
+            updateDetailedTable() {
+                const table = document.getElementById('detailed-table');
+                if (table) {
+                    table.innerHTML = this.createDetailedTable();
+                }
+            },
+
             createDashboardStructure(container) {
                 let html = '';
                 html += this.createBonusRangesSection();
                 html += this.createBonusCalculationSection();
                 container.innerHTML = html;
+
+                // Prepara a tabela detalhada (mesmo que não esteja visível)
+                this.updateDetailedTable();
             }
         };
 
@@ -1091,14 +1325,11 @@
                 const errorsElement = card.querySelector('.errors-value');
                 const badgeElement = card.querySelector('.current-badge');
 
-                // Update classes
                 card.className = `range-card ${theme.class} ${isCurrent ? 'current' : ''}`;
 
-                // Update values with animation
                 this.animateValueUpdate(valueElement, rangeValue, index);
                 this.animateValueUpdate(errorsElement, rangeErrors, index);
 
-                // Update badge
                 this.updateCurrentBadge(card, badgeElement, isCurrent);
             },
 
@@ -1118,6 +1349,11 @@
                 } else if (!isCurrent && badgeElement) {
                     badgeElement.remove();
                 }
+            },
+
+            // Método simplificado para atualizar a tabela detalhada
+            updateDetailedTable() {
+                components.updateDetailedTable();
             },
 
             updateBonusRangesSection() {
@@ -1140,14 +1376,12 @@
             },
 
             updateExistingRangesSection(existingMessage, existingSectionTitle, existingRangesSection, bonusRanges, currentRange, hasActive) {
-                // Update message
                 if (existingMessage) {
                     existingMessage.outerHTML = !hasActive ? this.createNoActiveRangeMessage() : '';
                 } else if (!hasActive) {
                     existingSectionTitle.insertAdjacentHTML('beforebegin', this.createNoActiveRangeMessage());
                 }
 
-                // Update range cards
                 const rangeCards = existingRangesSection.querySelectorAll('.range-card');
                 rangeCards.forEach((card, index) => {
                     const row = bonusRanges[index + 1];
@@ -1205,6 +1439,7 @@
             updateDashboardValues() {
                 this.updateBonusRangesSection();
                 this.updateBonusCalculationSection();
+                this.updateDetailedTable(); // Atualiza a tabela detalhada também
                 console.log('✅ Dashboard values updated smoothly');
             }
         };
@@ -1262,6 +1497,13 @@
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function () {
             console.log('🚀 WebApp initialized');
+
+            // Adiciona evento de clique ao botão de visão detalhada
+            const toggleButton = document.getElementById('toggle-detailed-view');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', uiManager.toggleDetailedView);
+            }
+
             loadSheetData();
 
             if (CONFIG.autoRefresh) {
@@ -1271,5 +1513,6 @@
         });
     </script>
 </body>
+  
 
 </html>
