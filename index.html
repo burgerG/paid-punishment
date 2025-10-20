@@ -8,7 +8,7 @@
     <style>
         /* ===== CSS VARIABLES ===== */
         :root {
-            /* Colors */
+            /* Color Palette */
             --primary-blue: #1e3c72;
             --secondary-blue: #2a5298;
             --success-green: #4CAF50;
@@ -19,7 +19,7 @@
             --text-medium: #666;
             --text-light: #fff;
 
-            /* Theme Colors */
+            /* Medal Theme Colors */
             --gold-color: #FFD700;
             --gold-dark: #B8860B;
             --silver-color: #C0C0C0;
@@ -28,7 +28,7 @@
             --bronze-dark: #8B4513;
             --default-color: #6c757d;
 
-            /* Spacing */
+            /* Spacing Scale */
             --spacing-xs: 5px;
             --spacing-sm: 8px;
             --spacing-md: 12px;
@@ -43,7 +43,7 @@
             --radius-lg: 12px;
             --radius-xl: 16px;
 
-            /* Shadows */
+            /* Shadow System */
             --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
             --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
             --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
             --transition-normal: 0.3s ease;
         }
 
-        /* ===== RESET & BASE STYLES ===== */
+        /* ===== BASE STYLES ===== */
         * {
             margin: 0;
             padding: 0;
@@ -100,10 +100,6 @@
             transform: scale(1.05) rotate(5deg);
         }
 
-        .header-text {
-            text-align: center;
-        }
-
         .header-text h1 {
             font-size: 2.2rem;
             margin-bottom: var(--spacing-sm);
@@ -114,7 +110,6 @@
         .header-text p {
             font-size: 1.1rem;
             opacity: 0.9;
-            margin-bottom: 0;
             color: var(--text-light);
         }
 
@@ -138,7 +133,7 @@
             font-weight: 600;
         }
 
-        /* ===== AUTO-REFRESH PROGRESS ===== */
+        /* ===== AUTO-REFRESH STYLES ===== */
         .refresh-progress-container {
             margin: -25px -25px 25px -25px;
             border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -172,7 +167,6 @@
             background: rgba(30, 60, 114, 0.2);
             border-radius: 2px;
             overflow: hidden;
-            position: relative;
         }
 
         .progress-fill {
@@ -319,12 +313,6 @@
             color: var(--text-dark);
             margin-bottom: var(--spacing-xs);
             line-height: 1;
-        }
-
-        .range-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-medium);
-            margin-bottom: 3px;
         }
 
         .range-errors {
@@ -597,6 +585,90 @@
             opacity: 1;
         }
 
+        /* ===== DETAILED VIEW STYLES ===== */
+        .detailed-view-toggle {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .detailed-view-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-light);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-light);
+        }
+
+        .detailed-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .detailed-table-container {
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-normal);
+        }
+
+        .detailed-table-container.hidden {
+            display: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e9ecef;
+            box-shadow: var(--shadow-light);
+        }
+
+        .detailed-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.85rem;
+        }
+
+        /* Table header styles - centered alignment */
+        .detailed-table th {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-light);
+            padding: var(--spacing-md) var(--spacing-sm);
+            text-align: center;
+            /* Center aligned headers */
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-blue);
+            position: sticky;
+            top: 0;
+        }
+
+        /* Table data styles - right aligned values */
+        .detailed-table td {
+            padding: var(--spacing-sm);
+            border-bottom: 1px solid #f0f0f0;
+            color: var(--text-dark);
+            text-align: right;
+            /* Right aligned data */
+        }
+
+        /* First column (Day) centered */
+        .detailed-table td:first-child {
+            text-align: center;
+            /* Center align day column */
+            font-weight: 500;
+        }
+
+        .detailed-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .detailed-table tr:hover {
+            background-color: #e9ecef;
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
             body {
@@ -706,6 +778,21 @@
             .no-active-range-message h3 {
                 font-size: 1.1rem;
             }
+
+            /* Mobile table styles */
+            .detailed-table {
+                font-size: 0.75rem;
+            }
+
+            .detailed-table th,
+            .detailed-table td {
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .detailed-view-btn {
+                padding: var(--spacing-sm) var(--spacing-lg);
+                font-size: 0.85rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -754,99 +841,6 @@
 
             .no-active-range-message h3 {
                 font-size: 1rem;
-            }
-        }
-
-        /* Estilos para o botão e tabela detalhada */
-        .detailed-view-toggle {
-            text-align: center;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .detailed-view-btn {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: var(--text-light);
-            border: none;
-            padding: var(--spacing-md) var(--spacing-xl);
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            box-shadow: var(--shadow-light);
-        }
-
-        .detailed-view-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .detailed-table-container {
-            margin-top: var(--spacing-xl);
-            transition: all var(--transition-normal);
-        }
-
-        .detailed-table-container.hidden {
-            display: none;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--radius-lg);
-            border: 1px solid #e9ecef;
-            box-shadow: var(--shadow-light);
-        }
-
-        .detailed-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            font-size: 0.85rem;
-        }
-
-        .detailed-table th {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: var(--text-light);
-            padding: var(--spacing-md) var(--spacing-sm);
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 2px solid var(--primary-blue);
-            position: sticky;
-            top: 0;
-        }
-
-        .detailed-table td {
-            padding: var(--spacing-sm);
-            border-bottom: 1px solid #f0f0f0;
-            color: var(--text-dark);
-        }
-
-        .detailed-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .detailed-table tr:hover {
-            background-color: #e9ecef;
-        }
-
-        .detailed-table tr.highlight-row {
-            background-color: #e3f2fd;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .detailed-table {
-                font-size: 0.75rem;
-            }
-
-            .detailed-table th,
-            .detailed-table td {
-                padding: var(--spacing-xs) var(--spacing-sm);
-            }
-
-            .detailed-view-btn {
-                padding: var(--spacing-sm) var(--spacing-lg);
-                font-size: 0.85rem;
             }
         }
     </style>
@@ -958,13 +952,13 @@
             // Nova função para converter valor monetário para número
             parseCurrency(value) {
                 if (!value || value === 'N/A') return 0;
-                
+
                 // Remove símbolos de moeda, espaços e converte vírgula para ponto
                 const cleaned = value.toString()
                     .replace(/[R$\s]/g, '')
                     .replace(/\./g, '')
                     .replace(',', '.');
-                
+
                 const number = parseFloat(cleaned);
                 return isNaN(number) ? 0 : number;
             },
@@ -992,7 +986,7 @@
                 });
 
                 console.log('📊 All data stored by cell address');
-                
+
                 // Prepara os dados da tabela detalhada sempre que novos dados são carregados
                 this.prepareDetailedTableData();
             },
@@ -1024,7 +1018,7 @@
             // Novo método para preparar os dados da tabela simplificada
             prepareDetailedTableData() {
                 const tableData = [];
-                
+
                 // Obtém os títulos das colunas
                 const dayTitle = this.getCellValue('A2') || 'Dia';
                 const valueTitle = this.getCellValue('B2') || 'Total de Descontos';
@@ -1035,7 +1029,7 @@
                 // Processa cada linha de dados (A3:S33)
                 for (let row = 3; row <= 33; row++) {
                     const day = this.getCellValue(`A${row}`);
-                    
+
                     // Se não há dia, para o processamento
                     if (!day || day === 'N/A') continue;
 
@@ -1128,7 +1122,7 @@
                     container.classList.remove('hidden');
                     button.textContent = '📊 Ocultar Detalhes';
                     button.style.background = 'linear-gradient(135deg, var(--error-red), #c0392b)';
-                    
+
                     // Garante que a tabela está atualizada
                     components.updateDetailedTable();
                 } else {
@@ -1284,11 +1278,11 @@
                     const rowClass = isHeader ? 'table-header' : '';
 
                     tableHTML += `<tr class="${rowClass}">`;
-                    
+
                     row.forEach(cell => {
                         tableHTML += `<${tag}>${cell || ''}</${tag}>`;
                     });
-                    
+
                     tableHTML += '</tr>';
                 });
 
@@ -1513,6 +1507,6 @@
         });
     </script>
 </body>
-  
+
 
 </html>
