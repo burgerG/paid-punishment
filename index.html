@@ -981,9 +981,13 @@
             <div class="splash-progress" id="splash-progress"></div>
         </div>
     </div>
-    <audio id="myAudio">
+    <audio id="audio-theme">
         <source src="./assets/theme.mp3" type="audio/ogg">
         <source src="./assets/theme.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-orgulho">
+        <source src="./assets/orgulho.mp3" type="audio/ogg">
+        <source src="./assets/orgulho.mp3" type="audio/mpeg">
     </audio>
     <div class="container">
         <div class="header">
@@ -1113,6 +1117,7 @@
         // ===== SPLASH SCREEN MANAGER =====
         const splashManager = {
             hasBeenShown: false,
+            isDone: false,
             element: null,
             textElement: null,
             progressElement: null,
@@ -1135,10 +1140,14 @@
             },
 
             hide() {
-                if (this.element) {
-                    document.getElementById("myAudio").play();
+                if (!this.isDone) {
+                    let hasRange = components.hasActiveRange()
+                    let audio = hasRange ? document.getElementById("audio-theme") : document.getElementById("audio-orgulho");
+                    console.log(audio)
+                    audio.play()
                     this.element.classList.add('hidden');
                     this.stopIteration();
+                    this.isDone = true;
                 }
             },
 
